@@ -14,8 +14,10 @@ typedef struct
 
 	// 当前需要启动的应用地址
 	uint CurrentAppLoadAddr;
-	// 当前应用版本。一般使用2000年至今的秒数。
+	// 当前应用版本。一般使用2000年至今的分钟数。
 	uint CurrentVersion;
+	// 硬件版本。
+	uint HardwareVersion;
 
 	// 新APP的存放地址。
 	uint NewAppSaveAddr;
@@ -39,7 +41,7 @@ typedef struct
 // 32KBYTE 的 BootLoad 大小。配置放在此区间的最后一个 Block
 // #define BootLoadFlashSize	(32*1024)
 // #define BootLoadFlashSize	(16*1024)
-#define BootLoadFlashSize	(8*1024)
+#define BootLoadFlashSize	(12*1024)
 
 // Config 默认放在最后一个Flash块内
 // 魔数  默认为 ： 'M' 'a' 'g' '&'   0x4D616726

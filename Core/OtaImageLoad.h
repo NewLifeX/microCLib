@@ -27,4 +27,9 @@ uint OtaImageCrc(uint offset, int len);
 /// <returns></returns>
 bool OtaImageCrcCheck(uint offset, int len, uint crc2);
 
-
+/// <summary>更新ota信息，启动升级前的动作</summary>
+/// <param name="size">新app大小</param>
+/// <param name="crc">新app crc</param>
+/// <param name="version">版本，可填0</param>
+/// <returns></returns>
+bool OtaUpdateImageInfo(int size, uint crc, uint version);

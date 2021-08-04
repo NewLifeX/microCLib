@@ -17,7 +17,7 @@ bool GetConfig(Config_t* cfg,uint addr)
 	if (cf->MagicNum != 0x4D616726)return false;
 
 	// 计算校验
-	uint crc = CaclcCRC32((byte*)cf, sizeof(ConfigBase_t) - sizeof(cf->Crc32));
+	uint crc = CaclcCRC32B((byte*)cf, sizeof(ConfigBase_t) - sizeof(cf->Crc32));
 	if (cf->Crc32 != crc)return false;
 
 	memcpy(cfg, (byte*)&cf->Config, cf->Length);
@@ -45,7 +45,7 @@ bool SetConfig(Config_t* cfg2, uint addr)
 	memcpy((byte*)&base.Config, (byte*)cfg2, sizeof(Config_t));
 
 	// 计算校验
-	uint crc = CaclcCRC32((byte*)&base, sizeof(ConfigBase_t) - sizeof(base.Crc32));
+	uint crc = CaclcCRC32B((byte*)&base, sizeof(ConfigBase_t) - sizeof(base.Crc32));
 	base.Crc32 = crc;
 
 	const int tryCount = 3;

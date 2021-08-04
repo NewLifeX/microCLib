@@ -18,7 +18,7 @@ bool BootLoadGetConfig(BootLoadConfig_t* cfg)
 	if (cf->MagicNum != 0x4D616726)return false;
 
 	// 计算校验
-	uint crc = CaclcCRC32((byte*)cf, sizeof(BootLoadConfig_t) - sizeof(cf->Crc32));
+	uint crc = CaclcCRC32B((byte*)cf, sizeof(BootLoadConfig_t) - sizeof(cf->Crc32));
 	if (cf->Crc32 != crc)return false;
 
 	memcpy(cfg, cf, sizeof(BootLoadConfig_t));
@@ -30,7 +30,7 @@ bool BootLoadSetConfig(BootLoadConfig_t* cfg)
 	cfg->MagicNum = 0x4D616726;
 
 	// 计算校验
-	uint crc = CaclcCRC32((byte*)cfg, sizeof(BootLoadConfig_t) - sizeof(cfg->Crc32));
+	uint crc = CaclcCRC32B((byte*)cfg, sizeof(BootLoadConfig_t) - sizeof(cfg->Crc32));
 	cfg->Crc32 = crc;
 
 	uint addr = BootLoadFlashSize - GetFlashBlockSize(0) + GetChipStartAddr(0);

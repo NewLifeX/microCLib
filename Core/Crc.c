@@ -148,19 +148,60 @@ uint32_t CaclcCRC32(const unsigned char* buf, uint32_t size)
 	return crc ^ 0xFFFFFFFF;
 }
 
-// 衔接上一个CRC的时候需要 crc^= 0xffffffff;
-// 例程
-// uint crc = CaclcCRC32_Accumulate( buf1, buf1size, 0xFFFFFFFF);
-// crc^= 0xffffffff;
-// crc = CaclcCRC32_Accumulate( buf2, buf2size, crc);
 uint CaclcCRC32_Accumulate(const byte* buf, uint size,uint crc)
 {
+	crc = crc ^ 0xFFFFFFFF;
+
 	for (uint i = 0; i < size; i++)
 		crc = crc32tab[(crc ^ buf[i]) & 0xff] ^ (crc >> 8);
 
 	return crc ^ 0xFFFFFFFF;
 }
 
+uint CaclcCRC32_AccumulateB(const byte* data, uint len, uint crc32)
+{
+	crc32 = crc32 ^ 0xFFFFFFFF;
+
+	int CrcPoly = 0xedb88320;
+
+	for (int i = 0; i < len; i++)
+	{
+		uint temp = data[i];
+		for (int j = 0; j < 8; j++)
+		{
+			if (((crc32 ^ temp) & 1) != 0)
+				crc32 = ((crc32 >> 1) & 0x7fffffff) ^ CrcPoly;
+			else
+				crc32 = ((crc32 >> 1) & 0x7fffffff);
+
+			temp = (temp >> 1) & 0x7fffffff;
+		}
+	}
+
+	return crc32 ^ 0xffffffff;
+}
+
+uint CaclcCRC32B(const byte* data, int len)
+{
+	int CrcPoly = 0xedb88320;
+
+	uint crc32 = 0xffffffff;
+	for (int i = 0; i < len; i++)
+	{
+		uint temp = data[i];
+		for (int j = 0; j < 8; j++)
+		{
+			if (((crc32 ^ temp) & 1) != 0)
+				crc32 = ((crc32 >> 1) & 0x7fffffff) ^ CrcPoly;
+			else
+				crc32 = ((crc32 >> 1) & 0x7fffffff);
+
+			temp = (temp >> 1) & 0x7fffffff;
+		}
+	}
+
+	return crc32 ^ 0xffffffff;
+}
 
 static void InvertUint8(byte* dBuf, byte* srcBuf)
 {
@@ -361,7 +402,6 @@ ushort CaclcCRC16_USB(const byte* puchMsg, uint usDataLen)
 	return (wCRCin ^ 0xFFFF);
 }
 
-
 ushort CaclcCRC16_MODBUS(const byte* cmd, uint len)
 {
 	uint i, j;
@@ -384,7 +424,6 @@ ushort CaclcCRC16_MODBUS(const byte* cmd, uint len)
 
 	return CRC16;
 }
-
 
 typedef struct
 {

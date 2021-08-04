@@ -7,6 +7,14 @@
 #include "Cpu.h"
 #include "Debug.h"
 
+// #define BOOTVERSION
+#ifdef BOOTVERSION
+
+#include "Version.h"
+#include "HardwareVersion.h"
+
+#endif
+
 // dst 必须是第一 chip。 
 // 返回是否成功。
 bool CopyBin(uint dst, uint src, int size)
@@ -46,16 +54,34 @@ bool CheckNewApp(BootLoadConfig_t* cfg)
 		return false;
 	}
 
+#ifdef BOOTVERSION
 	// 校验版本
 	// if (cfg->NewAppVersion <= cfg->CurrentVersion)return false;
+	uint appFwVer = GetFwVersion(cfg->NewAppSaveAddr, cfg->NewAppSize);
+	uint hardVer = GetHardwareVersion2(cfg->NewAppSaveAddr, cfg->NewAppSize);
+	uint hardVer2 = GetHardwareVersion2(cfg->CurrentAppLoadAddr, GetFlashSize() / 2);
+
+	DebugPrintf("NewFwVer   0x%08X\r\n", appFwVer);
+	DebugPrintf("NewHardVer 0x%08X  \t", hardVer);
+	DebugPrintf("CurHardVer 0x%08X\r\n", hardVer2);
+	if (appFwVer != cfg->NewAppVersion)return false;
+	if ((hardVer != 0) && (hardVer2 != 0))
+	{
+		if (hardVer != hardVer2)return false;
+	}
+#endif
 
 	// 校验 CRC
-	uint crc = CaclcCRC32((byte*)cfg->NewAppSaveAddr, cfg->NewAppSize);
+	uint crc = CaclcCRC32B((byte*)cfg->NewAppSaveAddr, cfg->NewAppSize);
 	if (crc != cfg->NewAppCrc32)
 	{
 		DebugPrintf("CheckNewApp NewAppCrc32 Error\r\n");
 		return false;
 	}
+
+	// 新老APP 是同一份。不需要升级。
+	uint currcrc = CaclcCRC32B((byte*)cfg->CurrentAppLoadAddr, cfg->NewAppSize);
+	if (crc == currcrc)return false;
 
 	return true;
 }
@@ -75,7 +101,7 @@ bool CheckAddUpdate(BootLoadConfig_t* cfg)
 	{
 		CopyBin(cfg->NewAppLoadAddr, cfg->NewAppSaveAddr, cfg->NewAppSize);
 
-		uint crc = CaclcCRC32((byte*)cfg->NewAppLoadAddr, cfg->NewAppSize);
+		uint crc = CaclcCRC32B((byte*)cfg->NewAppLoadAddr, cfg->NewAppSize);
 		if (crc == cfg->NewAppCrc32)
 		{
 			isOk = true;
@@ -140,11 +166,22 @@ void BootLoadMain(void)
 		Cfg.CurrentVersion = 0;
 
 		DebugPrintf("\tCurrent App Addr    : 0x%08X\r\n", Cfg.CurrentAppLoadAddr);
-		DebugPrintf("\tCurrent App Version : 0x%08X\r\n",Cfg.CurrentVersion);
+		// DebugPrintf("\tCurrent App Version : 0x%08X\r\n",Cfg.CurrentVersion);
 		// DebugPrintf("\tCurrent App Version : 0x");
 		// uint* p = (uint*)&Cfg.CurrentVersion;
 		// DebugPrintf("%08X", p[1]);
 		// DebugPrintf("%08X\r\n", p[0]);
+
+#ifdef BOOTVERSION
+		uint appFwVer = GetFwVersion(Cfg.CurrentAppLoadAddr, GetFlashSize() / 2);
+		uint hardVer = GetHardwareVersion2(Cfg.CurrentAppLoadAddr, GetFlashSize() / 2);
+
+		DebugPrintf("CurrHardVer 0x%08X\r\n", hardVer);
+		DebugPrintf("CurrFwVer   0x%08X\r\n", appFwVer);
+
+		Cfg.CurrentVersion = appFwVer;
+		Cfg.HardwareVersion = hardVer;
+#endif
 
 		// 启动
 		Boot(Cfg.CurrentAppLoadAddr);
@@ -153,9 +190,8 @@ void BootLoadMain(void)
 	{
 		DebugPrintf("BootLoadGetConfig OK\r\n");
 		DebugPrintf("Cur App Address	: 0x%08X\r\n", Cfg.CurrentAppLoadAddr);
-		DebugPrintf("Cur App Version	: 0x%08X\r\n", Cfg.CurrentVersion);
-
-		DebugPrintf("New App Version	: 0x%08X\r\n",Cfg.NewAppVersion);
+		// DebugPrintf("Cur App Version	: 0x%08X\r\n", Cfg.CurrentVersion);
+		// DebugPrintf("New App Version	: 0x%08X\r\n",Cfg.NewAppVersion);
 
 		// 获取成功
 		// 尝试升级
@@ -167,7 +203,7 @@ void BootLoadMain(void)
 }
 
 // 保存 BootLoad 升级信息。
-bool SaveUpdateConfig(uint appSaveAddr,uint appLoadAddr, int appSize,uint64 version)
+bool SaveUpdateConfig(uint appSaveAddr, uint appLoadAddr, int appSize, uint64 version)
 {
 	// 配置信息。
 	BootLoadConfig_t Cfg;
@@ -183,7 +219,7 @@ bool SaveUpdateConfig(uint appSaveAddr,uint appLoadAddr, int appSize,uint64 vers
 	}
 
 	// 计算 CRC 存盘。
-	uint crc = CaclcCRC32((byte*)appSaveAddr, appSize);
+	uint crc = CaclcCRC32B((byte*)appSaveAddr, appSize);
 
 	// 销毁新APP信息。
 	Cfg.NewAppCrc32 = crc;

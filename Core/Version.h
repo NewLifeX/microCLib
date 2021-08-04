@@ -5,6 +5,9 @@
 
 // 版本号使用发布/编译时间 减去 2000-1-1 00:00:00 得到的分钟数。
 
+// 可以给外部使用，打印出来编译时间。
+extern const char* FirmwareBuildTime;
+
 // 可以给外部使用，打印出来发布时间。
 extern const char* PublishesTime;
 
@@ -31,4 +34,10 @@ tm_hour		// 时 - 取值区间为[0,23]
 tm_min		// 分 - 取值区间为[0,59]
 tm_sec		// 秒 - 取值区间为[0,59]
 */
+
+/// <summary>获取软件版本</summary>
+/// <param name="addr">固件起始地址</param>
+/// <param name="len">固件大小</param>
+/// <returns></returns>
+uint GetFwVersion(uint addr, int len);
 

@@ -12,16 +12,15 @@
 void CRC16(const unsigned char* pDataIn, int iLenIn, unsigned short* pCRCOut);
 uint16_t CaclcCRC16(const unsigned char* pDataIn, int iLenIn);
 
-// 计算CRC
+// 查表法计算CRC
 uint32_t CaclcCRC32(const unsigned char* buf, uint32_t size);
-
-// 累积的CRC方式。
-// 衔接上一个CRC的时候需要 crc^= 0xffffffff;
-// 例程
-// uint crc = CaclcCRC32_Accumulate( buf1, buf1size, 0xFFFFFFFF);  // 或者 uint crc = CaclcCRC32( buf1, buf1size);
-// crc^= 0xffffffff;
-// crc = CaclcCRC32_Accumulate( buf2, buf2size, crc);
+// 查表法计算累积的CRC方式。
 uint CaclcCRC32_Accumulate(const byte* buf, uint size, uint crc);
+
+// 直接计算CRC，耗性能。但是省Flash
+uint CaclcCRC32B(const byte* data, int len);
+// 对应的累积计算方式。
+uint CaclcCRC32_AccumulateB(const byte* data, uint len, uint crc32);
 
 
 // 测试是哪种CRC

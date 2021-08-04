@@ -20,6 +20,14 @@
 
 */
 
+// 可以给外部使用，打印出来画图时间。
+extern const char* HardwareTime;
+
 // 版本号使用电路板时间减去 2000-1-1 00:00:00 得到的分钟数。
 uint GetHardwareVersion(void);
 
+/// <summary>获取硬件版本</summary>
+/// <param name="addr">固件起始地址</param>
+/// <param name="len">固件大小</param>
+/// <returns></returns>
+uint GetHardwareVersion2(uint addr, int len);

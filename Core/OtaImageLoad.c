@@ -1,15 +1,10 @@
 
-
 #include "OtaImageLoad.h"
 #include "BootLoadConfig.h"
-
-
 #include "Crc.h"
-// CRC 使用的函数
-#define OTACRCFUNC CaclcCRC16_MODBUS
 
 #ifndef OTACRCFUNC
-#define OTACRCFUNC CaclcCRC32
+#define OTACRCFUNC CaclcCRC32B
 #endif
 
 #ifndef OTAFLASHSIZE
@@ -60,4 +55,53 @@ bool OtaImageCrcCheck(uint offset, int len, uint crc2)
 }
 
 
+#include "Debug.h"
+#include "Version.h"
+#include "HardwareVersion.h"
+
+/// <summary>更新ota信息，启动升级前的动作</summary>
+/// <param name="size">新app大小</param>
+/// <param name="crc">新app crc</param>
+/// <param name="version">版本，可填0</param>
+/// <returns></returns>
+bool OtaUpdateImageInfo(int size, uint crc, uint version)
+{
+	BootLoadConfig_t cfg;
+	BootLoadGetConfig(&cfg);
+
+	cfg.NewAppSaveAddr = OTAFLASHADDRESS;
+	cfg.NewAppLoadAddr = BootLoadFlashSize;
+	cfg.NewAppSize = size;
+	cfg.NewAppVersion = version;
+
+	if (!OtaImageCrcCheck(0, size, crc))
+	{
+		DebugPrintf("OtaUpdateImageInfo OtaImageCrcCheck Error\r\n");
+		return false;
+	}
+
+	// BOOTLOAD 采用 CRC32。
+	cfg.NewAppCrc32 = CaclcCRC32B((byte*)OTAFLASHADDRESS, size);
+
+	uint newhdver = GetHardwareVersion2(OTAFLASHADDRESS, size);
+	uint currhdver = GetHardwareVersion();
+	if (newhdver != currhdver)
+	{
+		DebugPrintf("Hardware Version Error curr 0x%08X,new 0x%08X\r\n", currhdver, newhdver);
+		return false;
+	}
+
+	if (version == 0) version = GetFwVersion(OTAFLASHADDRESS, size);
+	
+	cfg.HardwareVersion = newhdver;
+	cfg.NewAppVersion = version;
+
+	if (!BootLoadSetConfig(&cfg))
+	{
+		DebugPrintf("OtaUpdateImageInfo BootLoadSetConfig Error\r\n");
+		return false;
+	}
+
+	return true;
+}
 

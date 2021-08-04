@@ -20,7 +20,7 @@ bool DoUpdate(UpdateBinInfo_t* info, uint saveAddr, byte* bin)
 	}
 
 	// 校验Flash内的bin是否正确。
-	uint flashcrc = CaclcCRC32((byte*)saveAddr, info->Size);
+	uint flashcrc = CaclcCRC32B((byte*)saveAddr, info->Size);
 	if (flashcrc != info->Crc32)return false;
 
 	BootLoadConfig_t cfg;
