@@ -2,6 +2,7 @@
 #include "OtaImageLoad.h"
 #include "BootLoadConfig.h"
 #include "Crc.h"
+#include "Debug.h"
 
 #ifndef OTACRCFUNC
 #define OTACRCFUNC CaclcCRC32B
@@ -39,6 +40,7 @@ uint OtaImageCrc(uint offset, int len)
 	if (offset + len > patitionSize)return false;
 
 	uint crc = OTACRCFUNC((byte*)(baseaddr + offset), len);
+	DebugPrintf("OtaImageCrc %d [%d] %04X\r\n", offset, len, crc);
 	return crc;
 }
 
@@ -70,7 +72,7 @@ bool OtaUpdateImageInfo(int size, uint crc, uint version)
 	BootLoadGetConfig(&cfg);
 
 	cfg.NewAppSaveAddr = OTAFLASHADDRESS;
-	cfg.NewAppLoadAddr = BootLoadFlashSize;
+	cfg.NewAppLoadAddr = BootLoadFlashSize + GetChipStartAddr(0);
 	cfg.NewAppSize = size;
 	cfg.NewAppVersion = version;
 
@@ -92,8 +94,8 @@ bool OtaUpdateImageInfo(int size, uint crc, uint version)
 	}
 
 	if (version == 0) version = GetFwVersion(OTAFLASHADDRESS, size);
-	
-	cfg.HardwareVersion = newhdver;
+
+	// cfg.HardwareVersion = newhdver;
 	cfg.NewAppVersion = version;
 
 	if (!BootLoadSetConfig(&cfg))

@@ -48,7 +48,7 @@ uint GetHardwareVersion(void)
 	GetTime(&time);
 
 	// 计算秒差/60=分钟差。
-	double min = difftime(mktime(&time), mktime(&start))/60.0;
+	double min = difftime(mktime(&time), mktime(&start)) / 60.0;
 	uint minuint = (int)min;
 
 	return minuint;
@@ -61,10 +61,20 @@ uint GetHardwareVersion(void)
 uint GetHardwareVersion2(uint addr, int len)
 {
 	char* head = "HardwareTime/";
-	int idx = ArrayIndexOf((byte*)addr, len, (byte*)head, strlen(head));
+	int headlen = strlen(head);
+	int idx = ArrayIndexOf((byte*)addr, len, (byte*)head, headlen);
 	if (idx == -1)return 0;
 
 	char* p = (char*)(addr + idx);
+	if (strlen(p) == headlen)
+	{
+		// 因为本函数的问题，字符串会多一份。需要过滤。
+		idx = ArrayIndexOf_Offset((byte*)addr, len, (byte*)head, headlen, idx + headlen);
+
+		if (idx == -1)return 0;
+		p = (char*)(addr + idx);
+	}
+
 	struct tm start =
 	{
 		.tm_year = 100,		// 其值等于实际年份减去1900

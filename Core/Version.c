@@ -59,7 +59,7 @@ bool GetPublishesTime(struct tm* time)
 	// 发现没有被修改。说明没有通过工具发布过。
 	// 不能再出现 PublishesTime/ 否则上位机小工具找到的内容会出问题。
 	// if (memcmp("PublishesTime/yyyy", PublishesTime, 18) == 0)return false;
-	if (strstr(PublishesTime,"yyyy") != 0)return false;
+	if (strstr(PublishesTime, "yyyy") != 0)return false;
 
 	sscanf(PublishesTime, "%*[^/]/%d-%d-%d %d:%d:%d", &time->tm_year, &time->tm_mon, &time->tm_mday,
 		&time->tm_hour, &time->tm_min, &time->tm_sec);
@@ -110,10 +110,20 @@ uint GetVersion(void)
 uint GetFwVersion(uint addr, int len)
 {
 	char* head = "FirmwareBuildTime/";
-	int idx = ArrayIndexOf((byte*)addr, len, (byte*)head, strlen(head));
+	int headlen = strlen(head);
+	int idx = ArrayIndexOf((byte*)addr, len, (byte*)head, headlen);
 	if (idx == -1)return 0;
 
 	char* p = (char*)(addr + idx);
+	if (strlen(p) == headlen)
+	{
+		// 因为本函数的问题，字符串会多一份。需要过滤。
+		idx = ArrayIndexOf_Offset((byte*)addr, len, (byte*)head, headlen, idx + headlen);
+
+		if (idx == -1)return 0;
+		p = (char*)(addr + idx);
+	}
+
 	struct tm start =
 	{
 		.tm_year = 100,		// 其值等于实际年份减去1900

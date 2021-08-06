@@ -34,6 +34,24 @@ int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen)
 	return -1;
 }
 
+int ArrayIndexOf_Offset(byte* src, int srclen, byte* sub, int sublen, int offset)
+{
+	if (src == NULL)return -1;
+	if (sub == NULL)return -1;
+
+	src += offset;
+	srclen -= offset;
+
+	if (srclen < 1)return -1;
+	if (sublen < 1)return -1;
+	if (srclen < sublen)return -1;
+	
+	int idx = ArrayIndexOf(src, srclen, sub, sublen);
+	if (idx < 0)return -1;
+
+	return idx + offset;
+}
+
 int ArrayIndexOfBuff(Buffer_t* src, Buffer_t* sub)
 {
 	if (src == NULL)return -1;
@@ -133,36 +151,3 @@ void ArrayReverseBuff2(Buffer2_t* buff)
 
 	ArrayReverse(buff->data, buff->len);
 }
-
-void ArraySortByte(byte* data, int len)
-{
-	for (int i = 0; i < len - 1; i++) 
-	{
-		for (int j = 0; j < len - 1 - i; j++)
-		{
-			if (data[j] > data[j + 1])
-			{
-				byte temp = data[j + 1];
-				data[j + 1] = data[j];
-				data[j] = temp;
-			}
-		}
-	}
-}
-
-void ArraySortUint(uint* data, int len)
-{
-	for (int i = 0; i < len - 1; i++) 
-	{
-		for (int j = 0; j < len - 1 - i; j++)
-		{
-			if (data[j] > data[j + 1])
-			{
-				uint temp = data[j + 1];
-				data[j + 1] = data[j];
-				data[j] = temp;
-			}
-		}
-	}
-}
-

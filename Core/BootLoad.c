@@ -50,7 +50,7 @@ bool CheckNewApp(BootLoadConfig_t* cfg)
 	if ((cfg->NewAppSaveAddr + cfg->NewAppSize > GetFlashSize() + GetChipStartAddr(0))
 		|| (cfg->NewAppSaveAddr < GetChipStartAddr(0)))
 	{
-		DebugPrintf("CheckNewApp Save Error\r\n");
+		// DebugPrintf("CheckNewApp Save Error\r\n");
 		return false;
 	}
 
@@ -80,8 +80,8 @@ bool CheckNewApp(BootLoadConfig_t* cfg)
 	}
 
 	// 新老APP 是同一份。不需要升级。
-	uint currcrc = CaclcCRC32B((byte*)cfg->CurrentAppLoadAddr, cfg->NewAppSize);
-	if (crc == currcrc)return false;
+	// uint currcrc = CaclcCRC32B((byte*)cfg->CurrentAppLoadAddr, cfg->NewAppSize);
+	// if (crc == currcrc)return false;
 
 	return true;
 }
@@ -139,9 +139,15 @@ bool CheckAddUpdate(BootLoadConfig_t* cfg)
 		// DebugPrintf("Update configuration information\r\n");
 
 		// 配置信息存盘
+		bool saveOk = false;
 		for (int i = 0; i < 3; i++)
 		{
-			if (BootLoadSetConfig(cfg))break;
+			if (BootLoadSetConfig(cfg))
+			{
+				saveOk = true;
+				DebugPrintf("BootLoadSetConfig OK\r\n");
+				break;
+			}
 		}
 	}
 
@@ -192,6 +198,9 @@ void BootLoadMain(void)
 		DebugPrintf("Cur App Address	: 0x%08X\r\n", Cfg.CurrentAppLoadAddr);
 		// DebugPrintf("Cur App Version	: 0x%08X\r\n", Cfg.CurrentVersion);
 		// DebugPrintf("New App Version	: 0x%08X\r\n",Cfg.NewAppVersion);
+
+		// if (Cfg.CurrentAppLoadAddr == 0)Cfg.CurrentAppLoadAddr = BootLoadFlashSize + GetChipStartAddr(0);
+		// if (Cfg.CurrentAppLoadAddr < GetChipStartAddr(0))Cfg.CurrentAppLoadAddr = BootLoadFlashSize + GetChipStartAddr(0);
 
 		// 获取成功
 		// 尝试升级
