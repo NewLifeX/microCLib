@@ -1,13 +1,13 @@
-﻿import java.util.Arrays;
+import java.util.Arrays;
 
 public class ArrayHelper
 {
     /**
      * 搜索子数组
      * @param src 源数组
-     * @param sub 搜索项
-     * @param offset 搜索起始位置，
-     * @return 返回匹配位置
+     * @param sub 搜索内容
+     * @param offset 搜索起始位置
+     * @return 返回索引
      */
     public static int IndexOf(byte[] src,byte[] sub,int offset)
     {
@@ -20,7 +20,7 @@ public class ArrayHelper
 
         int i,j;
 
-        int maxidx = src.length - sub.length - offset + 1;
+        int maxidx = src.length - sub.length + 1;
 
         for (i = offset;i<maxidx;i++)
         {
@@ -38,11 +38,11 @@ public class ArrayHelper
     }
 
     /**
-     * 搜索字节位置
+     * 搜索字节
      * @param src 源数组
-     * @param value 搜索值
-     * @param offset 偏移量
-     * @return 返回匹配位置
+     * @param value 值
+     * @param offset 搜索起始位置
+     * @return 返回索引
      */
     public static int IndexOf(byte[] src,byte value,int offset)
     {
@@ -61,9 +61,9 @@ public class ArrayHelper
     }
 
     /**
-     * 从数组指定位置获取c字符串。c字符串的约定：字符串以 0x00 结尾。
+     * 按照C语言格式，读取一个字符串。c字符串约定，以0x00结尾
      * @param src 源数组
-     * @param offset 位置偏移量
+     * @param offset 位置
      * @return 返回字符串
      */
     public static String GetCString(byte[] src,int offset)
@@ -73,8 +73,13 @@ public class ArrayHelper
         var len = end-offset;
 
         if(len == 0)return "";
-        var sub = Arrays.copyOfRange(src,offset,len);
 
-        return new String(sub);
+        // System.out.printf("src %d\r\n",src.length);
+        // System.out.printf("GetCString offset %d,end %d,len %d\r\n",offset,end,end - offset);
+        var sub = Arrays.copyOfRange(src,offset,end);
+
+        var str = new String(sub);
+        // System.out.printf("sub %s len %d\r\n",str, str.length());
+        return  str;
     }
 }

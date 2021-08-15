@@ -1,22 +1,19 @@
-﻿import java.io.FileInputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 
 public class Project
 {
     public static void main(String[] args)
     {
-        System.out.printf("hello world!");
+        System.out.printf("hello world!\r\n");
 
+        String filename = "C:/Users/JiuHuan/Desktop/LCB/app.bin";
         FileInputStream fl;
         byte[] bin;
         try
         {
-            fl = new FileInputStream("C:\\Users\\JiuHuan\\Desktop\\锁控板\\NewLCB48A_V1.0\\app.bin");
+            fl = new FileInputStream(filename);
             bin = fl.readAllBytes();
         }
         catch (FileNotFoundException ex)
@@ -30,17 +27,13 @@ public class Project
             return;
         }
 
-        System.out.printf("new BinHelper");
+        System.out.printf("Read Bin File %s true\r\n",filename);
+        System.out.printf("new BinHelper\r\n");
         var bh = new BinHelper(bin);
 
-        // var fm = new SimpleDateFormat();
-        // try {
-        //     var a = fm.parse(time);
-        // }
-        // catch (ParseException ex)
-        // {
-        //     System.out.printf("%s",ex.toString());
-        // }
+        System.out.printf("HwVersion %d\r\n",bh.HwVersion);
+        System.out.printf("FwVersion %d\r\n",bh.FwVersion);
 
+        // BinHelper.Test();
     }
 }

@@ -1,25 +1,40 @@
-﻿import java.text.SimpleDateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * BIN固件帮助类。帮助获取BIN固件内的软硬件时间信息。进而计算出版本。
+ * 版本计算算法。时间 减去 2000-1-1，0：0：0 得到的分钟数。
+ */
 public class BinHelper
 {
+    /**
+     * 固件
+     */
     public byte[] Bin;
+    /**
+     * 固件（软件）版本
+     */
     public int FwVersion;
+    /**
+     * 硬件版本
+     */
     public int HwVersion;
 
     /**
-     *
-     * @param bin 固件数组
+     * 初始化
+     * @param bin
      */
     public BinHelper(byte[] bin)
     {
         Bin = bin;
+        FwVersion = GetFwVer();
+        HwVersion = GetHwVer();
     }
 
     /**
-     * 通过标记字符串，获取完整字符串
-     * @param head 标记头，字符串头，前缀
-     * @return 返回完整字符串，过滤掉前缀自己
+     * 按照给定的头搜索字符串
+     * @param head
+     * @return
      */
     public String GetWithHead(String head)
     {
@@ -28,7 +43,8 @@ public class BinHelper
         int idx = ArrayHelper.IndexOf(Bin,sub,0);
         if(idx<0)return  "";
         var s = ArrayHelper.GetCString(Bin,idx);
-        while(s.length() == head.length())
+
+        while(s.length() <= head.length()+2)
         {
             idx = ArrayHelper.IndexOf(Bin,sub,idx+1);
             if(idx<0)return  "";
@@ -39,14 +55,15 @@ public class BinHelper
     }
 
     /**
-     * 计算固件版本
-     * @return 固件版本
+     * 获取固件版本
+     * @return
      */
     public int GetFwVer()
     {
         String head = "FirmwareBuildTime/";
         // FirmwareBuildTime/Aug  4 2021,18:29:09
         var src = GetWithHead(head);
+        System.out.printf("%s\r\n",src);
         var timestr = src.substring(head.length());
         var dtbase = new Date(2000-1900,0,1,0,0,0);
 
@@ -55,14 +72,15 @@ public class BinHelper
     }
 
     /**
-     * 计算硬件版本
-     * @return 硬件版本
+     * 获取硬件版本
+     * @return
      */
     public int GetHwVer()
     {
         String head = "HardwareTime/";
         // HardwareTime/2021-05-22
         var src = GetWithHead(head);
+        System.out.printf("%s\r\n",src);
         var timestr = src.substring(head.length());
         var dtbase = new Date(2000-1900,0,1,0,0,0);
 
@@ -71,9 +89,9 @@ public class BinHelper
     }
 
     /**
-     * 月份字符串转为月份数字【0，11】
-     * @param str 月份字符串3字母表示
-     * @return 月份数字【0，11】
+     * 文字的月份转为0-11的月份值。
+     * @param str Jan，Feb，Mar，Apr，May，Jun，Jul，Aug，Sep，Oct，Nov，Dec
+     * @return 0-11
      */
     private static int StrMon(String str)
     {
@@ -82,9 +100,9 @@ public class BinHelper
     }
 
     /**
-     * 获取编译时间
-     * @param str C语言中 "__DATE__ , __TIME__"格式 “Aug  4 2021,18:29:09”
-     * @return 返回时间
+     * Aug  4 2021,18:29:09 格式转为 Date
+     * @param str C语言中 __DATE__ , __TIME__
+     * @return
      */
     public static Date GetFwTime(String str)
     {
@@ -104,9 +122,9 @@ public class BinHelper
     }
 
     /**
-     * 获取硬件时间
-     * @param str yyyy-MM-dd 格式 “2021-05-22”
-     * @return 返回时间
+     * 2021-05-22 格式转为时间 Date
+     * @param str yyyy-MM-dd
+     * @return
      */
     public static Date GetHwTime(String str)
     {
@@ -135,11 +153,11 @@ public class BinHelper
         var time = "Aug  4 2021,18:29:09";
         SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         var timestr = sdf.format(BinHelper.GetFwTime(time));
-        System.out.printf("%s",timestr);
+        System.out.printf("%s\r\n",timestr);
 
         time = "2021-05-22";
-        sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf=new SimpleDateFormat("yyyy-MM-dd");
         timestr = sdf.format(BinHelper.GetHwTime(time));
-        System.out.printf("%s",timestr);
+        System.out.printf("%s\r\n",timestr);
     }
 }
