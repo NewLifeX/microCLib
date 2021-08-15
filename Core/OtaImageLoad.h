@@ -14,6 +14,10 @@
 /// <returns>返回写入是否成功</returns>
 bool OtaImageSet(uint offset, byte* data, int len);
 
+/// <summary>清空Image区域</summary>
+/// <returns></returns>
+bool OtaImageClear(void);
+
 /// <summary>校验CRC</summary>
 /// <param name="offset"></param>
 /// <param name="len"></param>

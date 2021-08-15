@@ -31,6 +31,27 @@ bool OtaImageSet(uint offset, byte* data, int len)
 	return FlashWrite(baseaddr + offset, data, len, true);
 }
 
+bool OtaImageClear(void)
+{
+	int baseaddr = OTAFLASHADDRESS;
+	int patitionSize = OTAFLASHSIZE;
+
+	int bksize = GetFlashBlockSize(0);
+	if ((baseaddr % bksize) != 0)
+	{
+		WarningPrintf("Please alignment\r\n");
+		return false;
+	}
+
+	int bkcnt = OTAFLASHSIZE / bksize;
+	for (int i = 0; i < bkcnt; i++)
+	{
+		EraseBlock(baseaddr + (bksize * i), false);
+	}
+
+	return true;
+}
+
 uint OtaImageCrc(uint offset, int len)
 {
 	int baseaddr = OTAFLASHADDRESS;

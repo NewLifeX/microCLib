@@ -21,26 +21,40 @@ void structtmShow(struct tm* time)
 	);
 }
 
+static int StrMonToInt(char* str)
+{
+	static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
+	int mon = (strstr(month_names, str) - month_names) / 3;
+
+	return mon;
+}
+
 // C语言语法，多个字符串放一起，空格隔开。会自动拼接成一个。
 const char* FirmwareBuildTime = "FirmwareBuildTime/" __DATE__ "," __TIME__;
 bool GetBuildTime(struct tm* time)
 {
-	char monthStr[8];
+	char monthStr[3];
 	// sscanf(__DATE__, "%s %d %d", monthStr, &time->tm_mday, &time->tm_year);
 	// sscanf(__TIME__, "%d:%d:%d", &time->tm_hour, &time->tm_min, &time->tm_sec);
 	// DebugPrintf("%s\r\n", FirmwareBuildTime);
 	sscanf(FirmwareBuildTime, "%*[^/]/%s %d %d,%d:%d:%d", monthStr, &time->tm_mday, &time->tm_year,
 		&time->tm_hour, &time->tm_min, &time->tm_sec);
 
-	char* const mon[] = { "Jan","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
-	for (int i = 0; i < sizeof(mon) / sizeof(mon[0]); i++)
-	{
-		if (memcmp(monthStr, mon[i], 3) == 0)
-		{
-			time->tm_mon = i;
-			break;
-		}
-	}
+	time->tm_mon = StrMonToInt(monthStr);
+
+	// static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
+	// time->tm_mon = (strstr(month_names, monthStr) - month_names) / 3;
+
+	// char* const mon[] = { "Jan","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
+	// for (int i = 0; i < sizeof(mon) / sizeof(mon[0]); i++)
+	// {
+	// 	if (memcmp(monthStr, mon[i], 3) == 0)
+	// 	{
+	// 		time->tm_mon = i;
+	// 		break;
+	// 	}
+	// }
+
 	// 处理 struct tm 取值范围。
 	time->tm_year -= 1900;
 
@@ -138,19 +152,25 @@ uint GetFwVersion(uint addr, int len)
 	struct tm time;
 	memset(&time, 0, sizeof(time));
 
-	char monthStr[8];
+	char monthStr[4];
 	sscanf(p, "%*[^/]/%s %d %d,%d:%d:%d", monthStr, &time.tm_mday, &time.tm_year,
 		&time.tm_hour, &time.tm_min, &time.tm_sec);
 
-	char* const mon[] = { "Jan","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
-	for (int i = 0; i < sizeof(mon) / sizeof(mon[0]); i++)
-	{
-		if (memcmp(monthStr, mon[i], 3) == 0)
-		{
-			time.tm_mon = i;
-			break;
-		}
-	}
+	time.tm_mon = StrMonToInt(monthStr);
+
+	// static const char month_names[] = "JanFebMarAprMayJunJulAugSepOctNovDec";
+	// time.tm_mon = (strstr(month_names, monthStr) - month_names) / 3;
+
+	// char* const mon[] = { "Jan","Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec" };
+	// for (int i = 0; i < sizeof(mon) / sizeof(mon[0]); i++)
+	// {
+	// 	if (memcmp(monthStr, mon[i], 3) == 0)
+	// 	{
+	// 		time.tm_mon = i;
+	// 		break;
+	// 	}
+	// }
+
 	// 处理 struct tm 取值范围。
 	time.tm_year -= 1900;
 
