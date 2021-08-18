@@ -20,5 +20,10 @@ void ArrayReverse(byte* data, int len);
 void ArrayReverseBuff(Buffer_t* buff);
 void ArrayReverseBuff2(Buffer2_t* buff);
 
+// 排序 从小到大 内部使用冒泡排序
+void ArraySortByte(byte* data, int len);
+void ArraySortUint(uint* data, int len);
+
+
 // 其他
 // copy 直接用 c 库

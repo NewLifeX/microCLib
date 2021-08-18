@@ -151,3 +151,36 @@ void ArrayReverseBuff2(Buffer2_t* buff)
 
 	ArrayReverse(buff->data, buff->len);
 }
+
+void ArraySortByte(byte* data, int len)
+{
+	for (int i = 0; i < len - 1; i++) 
+	{
+		for (int j = 0; j < len - 1 - i; j++)
+		{
+			if (data[j] > data[j + 1])
+			{
+				byte temp = data[j + 1];
+				data[j + 1] = data[j];
+				data[j] = temp;
+			}
+		}
+	}
+}
+
+void ArraySortUint(uint* data, int len)
+{
+	for (int i = 0; i < len - 1; i++) 
+	{
+		for (int j = 0; j < len - 1 - i; j++)
+		{
+			if (data[j] > data[j + 1])
+			{
+				uint temp = data[j + 1];
+				data[j + 1] = data[j];
+				data[j] = temp;
+			}
+		}
+	}
+}
+
