@@ -2,6 +2,16 @@
 #include "BackMemory.h"
 #include "Debug.h"
 
+/*
+// 从map文件抠出来的，MDK设置页面设置的IRAM1 start地址值。
+extern uint __microlib_freelist;
+#define BackMemoryEnd ((uint)&__microlib_freelist)
+*/
+
+int BKMask  __attribute__((section("BKMASK")));
+
+#define BackMemoryEnd ((uint)&BKMask)
+
 // 内存不需要初始化
 void BackupRegInit(void)
 {

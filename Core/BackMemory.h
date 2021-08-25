@@ -21,17 +21,19 @@
 
 目前决定使用方式 1 。 并挑选内存的首部位置，避免与freertos 冲突。
 	freertos 启动的时候会从硬件寄存器读取内存大小，将栈地址设置为内存最大地址。并不听从编译器设置的值。
+
+需要配合的文件：分散加载文件  .sct
+在 RW_IRAM1 内添加一行。
+*.o (BKMASK,+First)
+
+将 BKMASK 加入到 RAM 区的首位置。
+
 */
 
 #include "Type.h"
 
 // 硬件上的内存首地址
 #define MemoryBeginAddr 0x20000000
-
-// 从map文件抠出来的，MDK设置页面设置的IRAM1 start地址值。
-extern uint __microlib_freelist;
-#define BackMemoryEnd ((uint)&__microlib_freelist)
-
 
 // 初始化
 void BackupRegInit(void);
