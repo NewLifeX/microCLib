@@ -8,6 +8,9 @@ typedef unsigned int			uint;
 typedef long long int			int64;
 typedef unsigned long long int	uint64;
 
+// 系统时间使用64bit  （32bit不够用）
+typedef uint64 Time_t;
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -84,6 +87,20 @@ void ShowArray(char* name, byte* pdata, int datalen, int showlen);
 // 数组长度
 #define ArrayLength(arr) ((int)(sizeof(arr)/sizeof(arr[0])))
 
+// 大小端转换
+#define __REV16x(x) ((ushort)((x >> 8) & 0x00ff) | ((x << 8) & 0xff00))
+
+// 大小端切换
+static uint __REV32x(uint x)
+{
+	uint y = 0;
+	y = (x << 24) & 0xff000000;
+	y |= (x << 8) & 0xff0000;
+	y |= (x >> 8) & 0xff00;
+	y |= (x >> 24) & 0xff;
+
+	return y;
+}
 
 // 计算结构体内变量的内存偏移地址。
 // 为了避免与c库冲突，末尾添加 2.

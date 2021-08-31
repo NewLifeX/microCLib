@@ -3,6 +3,10 @@
 #include "Debug.h"
 // #include "Array.h"
 
+#ifndef __INLINE
+#define __INLINE inline
+#endif
+
 // 初始化
 bool CircularQueueInit(CircularQueue_t* queue, byte* p, int len)
 {
@@ -201,7 +205,7 @@ int CircularQueueIndexOf(CircularQueue_t* queue, byte* sub, int sublen)
 	if (queuelen < sublen)return -1;
 
 	// 考虑到中断会被修改，直接线copy出来用。
-	byte* head = (byte*)queue->pHead;
+	// byte* head = (byte*)queue->pHead;
 	byte* tail = (byte*)queue->pTail;
 	byte* memend = queue->MemEnd;
 

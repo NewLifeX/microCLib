@@ -23,7 +23,7 @@ void ArrayReverseBuff2(Buffer2_t* buff);
 // 排序 从小到大 内部使用冒泡排序
 void ArraySortByte(byte* data, int len);
 void ArraySortUint(uint* data, int len);
-
+void ArraySortInt(int* data, int len);
 
 // 其他
 // copy 直接用 c 库

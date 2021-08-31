@@ -17,9 +17,13 @@ void structtmShow(struct tm* time);
 // 获取编译时间，从 ASCII C 支持的 __DATE__  __TIME__
 bool GetBuildTime(struct tm* time);
 
+#ifdef PUBLISHTIME
+
 // 获取发布时间。 发布时间从另外小工具获得。
 // 小工具功能， 替换bin文件中的 yyyy-MM-dd HH:mm:ss
 bool GetPublishesTime(struct tm* time);
+
+#endif
 
 // 获取版本号。
 // uint 类型表示分钟可以支持 8171 年。 足够。

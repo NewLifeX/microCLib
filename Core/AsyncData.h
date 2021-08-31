@@ -15,7 +15,7 @@ typedef struct
 	int BuffLen;
 
 	// 异步时间
-	uint AsyncTime;
+	Time_t AsyncTime;
 
 	// 是否需要 Free
 	bool needFree;
@@ -47,4 +47,4 @@ int GetAsyncData(AsyncData_t* adt, byte** data);
 /// <param name="len">需要push的长度</param>
 /// <param name="atime">异步时间</param>
 /// <returns>返回实际push长度</returns>
-int PushAsyncData(AsyncData_t* adt, byte* data, int len ,uint atime);
+int PushAsyncData(AsyncData_t* adt, byte* data, int len , Time_t atime);

@@ -15,6 +15,8 @@ int BKMask  __attribute__((section("BKMASK")));
 // 内存不需要初始化
 void BackupRegInit(void)
 {
+	// int a = BKMask;
+	// if (a == 0xffffffff)return;
 	int Size = BackMemoryEnd - MemoryBeginAddr;
 	if (Size < 4)
 	{

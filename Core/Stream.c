@@ -1,4 +1,5 @@
 ﻿
+#include "Type.h"
 #include "Stream.h"
 
 void StreamInit(Stream_t* st, byte* p, int len)

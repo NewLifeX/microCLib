@@ -45,6 +45,7 @@ __inline void TryFreeAsyncData(AsyncData_t* pkt)
 		if (pkt->Data == NULL)ErrPrintf("TryCleanAsyncData Data = NULL");
 #endif
 		pkt->free(pkt->Data);
+		pkt->Data = NULL;
 		pkt->needFree = false;
 	}
 }
@@ -59,7 +60,7 @@ int GetAsyncData(AsyncData_t* pkt, byte** data)
 	return pkt->Datalen;
 }
 
-int PushAsyncData(AsyncData_t* pkt, byte* data, int len, uint atime)
+int PushAsyncData(AsyncData_t* pkt, byte* data, int len, Time_t atime)
 {
 	if (pkt == NULL)return 0;
 	if (pkt->Data == NULL)return 0;

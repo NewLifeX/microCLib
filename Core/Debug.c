@@ -5,15 +5,15 @@
 // 全局调试等级
 static volatile DebugLevel  PubLevel = DebugOff;
 
-// 最多4种方式进行。
-static FPutcFunc Fputs[4] = {NULL};
+// 最多2种方式进行。
+static FPutcFunc Fputs[2] = {NULL};
 
 // 注册
 bool FputcRegister(FPutcFunc func)
 {
 	if (func == NULL)return false;
 
-	for (int i = 0; i < sizeof(Fputs)/sizeof(Fputs[0]); i++)
+	for (int i = 0; i < ArrayLength(Fputs); i++)
 	{
 		if (Fputs[i] == NULL)
 		{
@@ -30,7 +30,7 @@ bool FputcUnRegister(FPutcFunc func)
 {
 	if (func == NULL)return true;
 
-	for (int i = 0; i < sizeof(Fputs) / sizeof(Fputs[0]); i++)
+	for (int i = 0; i < ArrayLength(Fputs); i++)
 	{
 		if (Fputs[i] == func)
 		{
@@ -47,7 +47,7 @@ int fputc(int ch, FILE* f)
 {
 	bool out = false;
 
-	for (int i = 0; i < sizeof(Fputs) / sizeof(Fputs[0]); i++)
+	for (int i = 0; i < ArrayLength(Fputs); i++)
 	{
 		if (Fputs[i] != NULL)
 		{
@@ -97,7 +97,6 @@ void SetDebugPort(ComName port)
 		TraceStack.Table[i] = NULL;
 	}
 #endif
-
 }
 
 void SetDebugLevel(DebugLevel level)
