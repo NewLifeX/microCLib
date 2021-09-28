@@ -199,3 +199,18 @@ void ArraySortInt(int* data, int len)
 		}
 	}
 }
+
+bool ArrayEqual(byte* b1, byte* b2, int len)
+{
+	if (b1 == NULL)return false;
+	if (b2 == NULL)return false;
+	if (len < 1)return false;
+	
+	for (int i = 0; i < len; i++)
+	{
+		if (b1[i] != b2[i])return false;
+	}
+
+	return true;
+}
+

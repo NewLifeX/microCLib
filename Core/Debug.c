@@ -1,4 +1,5 @@
 ﻿#include "Debug.h"
+#include "Uart.h"
 
 #ifdef DEBUG
 

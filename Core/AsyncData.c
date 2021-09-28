@@ -8,6 +8,9 @@ __inline void InitAsyncData(AsyncData_t* pkt)
 {
 	if (pkt == NULL)return;
 	memset(pkt, 0x00, sizeof(Buffer_t));
+
+	pkt->free = GlobleFree;
+	pkt->needFree = false;
 }
 
 bool InitAsyncData2(AsyncData_t* pkt, int len)

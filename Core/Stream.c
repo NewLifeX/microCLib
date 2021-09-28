@@ -24,6 +24,63 @@ int StreamWriteByte(Stream_t* st, byte data)
 	return 1;
 }
 
+int StreamWriteUshort(Stream_t* st, ushort data)
+{
+	if (st == NULL)return 0;
+
+	// 下标最大值是 Size-1  超过就说明写满了。
+	if (st->Position + 2 > st->Size)return 0;
+
+	if (st == NULL)return 0;
+
+	st->MemStart[st->Position] = (byte)data;
+	st->MemStart[st->Position + 1] = (byte)(data >> 8);
+	st->Position += 2;
+
+	return 2;
+}
+
+int StreamWriteUint(Stream_t* st, uint data)
+{
+	if (st == NULL)return 0;
+	// 下标最大值是 Size-1  超过就说明写满了。
+	if (st->Position + 4 > st->Size)return 0;
+
+	st->MemStart[st->Position] = (byte)data;
+	st->MemStart[st->Position + 1] = (byte)(data >> 8);
+	st->MemStart[st->Position + 2] = (byte)(data >> 16);
+	st->MemStart[st->Position + 3] = (byte)(data >> 24);
+	st->Position += 4;
+
+	return 4;
+}
+
+// 7位压缩编码。 取字节最高bit作为标记，标记后续字节还是不是内容。
+// 每字节有效数据 7bit
+int StreamWriteCompressionUint(Stream_t* st, uint data)
+{
+	if (st == NULL)return 0;
+
+	int len;
+	if (data < 128) len = 1;
+	else if (data < 16384)len = 2;
+	else if (data < 2097152)len = 3;
+	else if (data < 268435456)len = 4;
+	else len = 5;
+
+	if (st->Position + len > st->Size)return 0;
+
+	do
+	{
+		byte d = (data & 0x7f);
+		data >>= 7;
+		if (data > 0)d |= 0x80;
+		st->MemStart[st->Position++] = d;
+	} while (data > 0);
+
+	return len;
+}
+
 int StreamWriteBytes(Stream_t* st, byte* p, int len)
 {
 	if (st == NULL)return 0;
@@ -47,6 +104,74 @@ int StreamReadByte(Stream_t* st, byte* p)
 	st->Position++;
 
 	return 1;
+}
+
+int StreamReadUshort(Stream_t* st, ushort* data)
+{
+	if (st == NULL)return 0;
+
+	// 下标最大值是 Size-1  超过就说明写满了。
+	if (st->Position + 2 > st->Size)return 0;
+
+	if (st == NULL)return 0;
+
+	memcpy((byte*)data, st->MemStart + st->Position, 2);
+	st->Position += 2;
+	return 2;
+}
+
+int StreamReadUint(Stream_t* st, uint* data)
+{
+	if (st == NULL)return 0;
+	// 下标最大值是 Size-1  超过就说明写满了。
+	if (st->Position + 4 > st->Size)return 0;
+
+	memcpy((byte*)data, st->MemStart + st->Position, 4);
+	st->Position += 4;
+	return 4;
+}
+
+// 7位压缩编码。 取字节最高bit作为标记，标记后续字节还是不是内容。
+// 每字节有效数据 7bit
+int StreamReadCompressionUint(Stream_t* st, uint* data)
+{
+	if (st == NULL)return 0;
+	byte* p = st->MemStart + st->Position;
+	int remain = st->Size - st->Position;
+	if (remain > 5)remain = 5;
+
+	// 结果值
+	uint res = 0;
+	// 移位数，避免乘法
+	uint mov = 0;
+	// 拿出来使用，避免读失败的时候无法回退
+	int posi = st->Position;
+	// 读了的数据长度
+	int len = 0;
+	for (int i = 0; i < remain; i++)
+	{
+		// 取7bit  然后按照次数往后填充。
+		uint temp = (p[i] & 0x7f) << mov;
+		res |= temp;
+		mov += 7;
+		posi++;
+
+		if ((p[i] & 0x80) == 0)
+		{
+			// 下标跟长度的转换。
+			len = i + 1;
+			break;
+		}
+	}
+
+	// 超出字节数也没找到结尾字节，len == 0 。读取失败
+	if (len != 0)
+	{
+		*data = res;
+		st->Position = posi;
+	}
+
+	return len;
 }
 
 int StreamReadBytes(Stream_t* st, byte* p, int len)
@@ -117,7 +242,7 @@ static MemOptions_t const OptDefault =
 // 自动扩容的 Steam 函数 API。
 // 初始化的时候自动分配 128 字节。后续扩容按照 128 字节增加。
 // 扩容的内存来自 GlobalMalloc GlobalFree 这对函数。
-void AutoStreamInit(Stream_t* st, int len ,MemOptions_t* opt)
+void AutoStreamInit(Stream_t* st, int len, MemOptions_t* opt)
 {
 	if (opt == NULL)opt = (MemOptions_t*)&OptDefault;
 	if (len < 1)len = 128;

@@ -24,6 +24,12 @@ int CircularQueueWrite(CircularQueue_t* CQHandle, byte data);
 // 写入多字节,返回写入字节数
 int CircularQueueWrites(CircularQueue_t* CQHandle, byte* pdata, int len);
 
+/// <summary>写7位压缩编码</summary>
+/// <param name="queue"></param>
+/// <param name="data"></param>
+/// <returns>返回写入的字节数</returns>
+int CircularQueueWriteCompressionUint(CircularQueue_t* queue, uint data);
+
 // 获取有效数据长度
 int CircularQueueGetLength(CircularQueue_t* CQHandle);
 
@@ -37,6 +43,12 @@ bool CircularQueueRead(CircularQueue_t* CQHandle, byte* pdata);
 // justread = true 的时候,不修改 Stream 数据。只读
 int CircularQueueReads(CircularQueue_t* CQHandle, byte* pdata, int maxlen, bool justread);
 
+/// <summary>读7位压缩编码</summary>
+/// <param name="queue"></param>
+/// <param name="data">输出</param>
+/// <returns>返回读掉的长度</returns>
+int CircularQueueReadCompressionUint(CircularQueue_t* queue, uint* data);
+
 // 移位,环形队列，只允许往前 seek，不许后退。
 // 相当于 CircularQueueReads(queue, NULL,offset,false); 不读数据但是要移位
 // offset 会被处理成不会被越界！。
@@ -46,3 +58,12 @@ uint CircularQueueSeek(CircularQueue_t* CQHandle, uint offset);
 // 查找数据位置。没有找到返回 -1
 int CircularQueueIndexOf(CircularQueue_t* CQHandle, byte* data, int len);
 
+/// <summary>清空数据内容</summary>
+/// <param name="CQHandle"></param>
+void CircularQueueClear(CircularQueue_t* CQHandle);
+
+/// <summary>打印队列内容</summary>
+/// <param name="CQHandle"></param>
+/// <param name="showlen">打印长度。 -1 表示全部</param>
+/// <returns></returns>
+void CircularQueueShow(CircularQueue_t* CQHandle, int showlen);

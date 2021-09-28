@@ -27,9 +27,19 @@ typedef enum
 void StreamInit(Stream_t* st, byte* p, int len);
 
 int StreamWriteByte(Stream_t* st, byte data);
+int StreamWriteUshort(Stream_t* st, ushort data);
+int StreamWriteUint(Stream_t* st, uint data);
+// 7位压缩编码。 取字节最高bit作为标记，标记后续字节还是不是内容。
+// 有效数据 7bit
+int StreamWriteCompressionUint(Stream_t* st, uint data);
 int StreamWriteBytes(Stream_t* st, byte* p, int len);
 
 int StreamReadByte(Stream_t* st,byte* p);
+int StreamReadUshort(Stream_t* st, ushort* data);
+int StreamReadUint(Stream_t* st, uint* data);
+// 7位压缩编码。 取字节最高bit作为标记，标记后续字节还是不是内容。
+// 有效数据 7bit
+int StreamReadCompressionUint(Stream_t* st, uint* data);
 int StreamReadBytes(Stream_t* st, byte* p, int len);
 
 // 获取空闲空间

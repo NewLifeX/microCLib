@@ -27,3 +27,9 @@ void ArraySortInt(int* data, int len);
 
 // 其他
 // copy 直接用 c 库
+
+
+// 对比数组，相同返回true
+bool ArrayEqual(byte* b1, byte* b2, int len);
+
+
