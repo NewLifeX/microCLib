@@ -11,6 +11,8 @@
 #define cJSON_String 4
 #define cJSON_Array 5
 #define cJSON_Object 6
+// 自定义字符串，不需要添加双引号
+#define cJSON_BareString 7
 #define cJSON_IsReference 256
 
 // The cJSON structure
@@ -26,6 +28,10 @@ typedef struct cJSON
 	// 类型
 	// The type of the item, as above.
 	int type;
+
+	// 8字节的Value，可以承载所有类型了。
+	byte Value[8];
+
 
 	// 字符串值
 	// The item's string, if type==cJSON_String
@@ -78,6 +84,7 @@ cJSON* cJSON_CreateFalse(void);
 cJSON* cJSON_CreateBool(int b);
 cJSON* cJSON_CreateNumber(double num);
 cJSON* cJSON_CreateString(const char* string);
+cJSON* cJSON_CreateBareString(const char* string);
 cJSON* cJSON_CreateArray(void);
 cJSON* cJSON_CreateObject(void);
 
@@ -123,6 +130,7 @@ void cJSON_Minify(char* json);
 #define cJSON_AddBoolToObject(object,name,b)	cJSON_AddItemToObject(object, name, cJSON_CreateBool(b))
 #define cJSON_AddNumberToObject(object,name,n)	cJSON_AddItemToObject(object, name, cJSON_CreateNumber(n))
 #define cJSON_AddStringToObject(object,name,s)	cJSON_AddItemToObject(object, name, cJSON_CreateString(s))
+#define cJSON_AddBareStringToObject(object,name,s)	cJSON_AddItemToObject(object, name, cJSON_CreateBareString(s))
 
 // 设置值
 // When assigning an integer value, it needs to be propagated to valuedouble too.

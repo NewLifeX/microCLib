@@ -88,6 +88,8 @@ void cJSON_Delete(cJSON* c)
 // 解析数字值。
 static const char* parse_number(cJSON* item, const char* num)
 {
+	char* numbak = (char*)num;
+
 	// sign 正负数符号
 	// scale 小数点位置
 	// subscale 科学计数法 a x 10^n 的 n 值。
@@ -128,6 +130,15 @@ static const char* parse_number(cJSON* item, const char* num)
 
 	// number = +/- number.fraction * 10^+/- exponent
 	n = sign * n * pow(10.0, (scale + subscale * signsubscale));
+
+	int numlen = num - numbak;
+	char* numstr = (char*)cJSON_malloc(numlen + 1);
+	if (numstr != NULL)
+	{
+		item->valuestring = numstr;
+		memcpy(numstr, numbak, numlen);
+		numstr[numlen] = 0x00;
+	}
 
 	item->valuedouble = n;
 	item->valueint = (int)n;
@@ -432,6 +443,7 @@ static char* print_value(cJSON* item, int depth, int fmt)
 	case cJSON_True:	out = cJSON_strdup("true");		break;
 	case cJSON_Number:	out = print_number(item);		break;
 	case cJSON_String:	out = print_string(item);		break;
+	case cJSON_BareString:  out = cJSON_strdup(item->valuestring); break;
 	case cJSON_Array:	out = print_array(item, depth, fmt); break;
 	case cJSON_Object:	out = print_object(item, depth, fmt); break;
 	}
@@ -729,55 +741,55 @@ cJSON* cJSON_GetObjectItem(cJSON* object, const char* string) { cJSON* c = objec
 /* Utility for array list handling. */
 static void suffix_object(cJSON* prev, cJSON* item) { prev->next = item; item->prev = prev; }
 /* Utility for handling references. */
-static cJSON* create_reference(cJSON* item) 
+static cJSON* create_reference(cJSON* item)
 {
 	cJSON* ref = cJSON_New_Item();
 	if (!ref) return NULL;
-	
+
 	memcpy(ref, item, sizeof(cJSON));
 	ref->string = 0;
 	ref->type |= cJSON_IsReference;
 	ref->next = ref->prev = 0;
-	return ref; 
+	return ref;
 }
 
 /* Add item to array/object. */
-void   cJSON_AddItemToArray(cJSON* array, cJSON* item) 
+void   cJSON_AddItemToArray(cJSON* array, cJSON* item)
 {
 	cJSON* c = array->child;
 	if (!item) return;
-	
-	if (!c) 
+
+	if (!c)
 	{
-		array->child = item; 
-	} 
+		array->child = item;
+	}
 	else
-	{ 
+	{
 		while (c && c->next) c = c->next;
 		suffix_object(c, item);
 	}
 }
 
-void   cJSON_AddItemToObject(cJSON* object, const char* string, cJSON* item) 
+void   cJSON_AddItemToObject(cJSON* object, const char* string, cJSON* item)
 {
 	if (!item) return;
 	if (item->string)
 		cJSON_free(item->string);
 	item->string = cJSON_strdup(string);
-	cJSON_AddItemToArray(object, item); 
+	cJSON_AddItemToArray(object, item);
 }
 
 void	cJSON_AddItemReferenceToArray(cJSON* array, cJSON* item) { cJSON_AddItemToArray(array, create_reference(item)); }
 void	cJSON_AddItemReferenceToObject(cJSON* object, const char* string, cJSON* item) { cJSON_AddItemToObject(object, string, create_reference(item)); }
 
-cJSON* cJSON_DetachItemFromArray(cJSON* array, int which) 
+cJSON* cJSON_DetachItemFromArray(cJSON* array, int which)
 {
-	cJSON* c = array->child; 
-	while (c && which > 0) c = c->next, which--; 
+	cJSON* c = array->child;
+	while (c && which > 0) c = c->next, which--;
 
 	if (!c) return NULL;
 	if (c->prev) c->prev->next = c->next;
-	if (c->next) c->next->prev = c->prev; 
+	if (c->next) c->next->prev = c->prev;
 
 	if (c == array->child) array->child = c->next;
 
@@ -786,47 +798,47 @@ cJSON* cJSON_DetachItemFromArray(cJSON* array, int which)
 }
 
 void   cJSON_DeleteItemFromArray(cJSON* array, int which) { cJSON_Delete(cJSON_DetachItemFromArray(array, which)); }
-cJSON* cJSON_DetachItemFromObject(cJSON* object, const char* string) 
+cJSON* cJSON_DetachItemFromObject(cJSON* object, const char* string)
 {
 	int i = 0;
-	cJSON* c = object->child; 
-	while (c && cJSON_strcasecmp(c->string, string)) i++, c = c->next; 
+	cJSON* c = object->child;
+	while (c && cJSON_strcasecmp(c->string, string)) i++, c = c->next;
 	if (c) return cJSON_DetachItemFromArray(object, i);
-	
+
 	return NULL;
 }
 
 void   cJSON_DeleteItemFromObject(cJSON* object, const char* string) { cJSON_Delete(cJSON_DetachItemFromObject(object, string)); }
 
 /* Replace array/object items with new ones. */
-void   cJSON_ReplaceItemInArray(cJSON* array, int which, cJSON* newitem) 
+void   cJSON_ReplaceItemInArray(cJSON* array, int which, cJSON* newitem)
 {
 	cJSON* c = array->child;
-	while (c && which > 0) c = c->next, which--; 
-	
+	while (c && which > 0) c = c->next, which--;
+
 	if (!c) return;
 	newitem->next = c->next;
 	newitem->prev = c->prev;
 	if (newitem->next) newitem->next->prev = newitem;
-	if (c == array->child) 
-		array->child = newitem; 
-	else 
-		newitem->prev->next = newitem; 
+	if (c == array->child)
+		array->child = newitem;
+	else
+		newitem->prev->next = newitem;
 
-	c->next = c->prev = 0; 
+	c->next = c->prev = 0;
 	cJSON_Delete(c);
 }
 
-void   cJSON_ReplaceItemInObject(cJSON* object, const char* string, cJSON* newitem) 
+void   cJSON_ReplaceItemInObject(cJSON* object, const char* string, cJSON* newitem)
 {
-	int i = 0; 
-	cJSON* c = object->child; 
-	while (c && cJSON_strcasecmp(c->string, string))i++, c = c->next; 
-	if (c) 
+	int i = 0;
+	cJSON* c = object->child;
+	while (c && cJSON_strcasecmp(c->string, string))i++, c = c->next;
+	if (c)
 	{
-		newitem->string = cJSON_strdup(string); 
-		cJSON_ReplaceItemInArray(object, i, newitem); 
-	} 
+		newitem->string = cJSON_strdup(string);
+		cJSON_ReplaceItemInArray(object, i, newitem);
+	}
 }
 
 /* Create basic types: */
@@ -836,73 +848,74 @@ cJSON* cJSON_CreateFalse(void) { cJSON* item = cJSON_New_Item(); if (item)item->
 cJSON* cJSON_CreateBool(int b) { cJSON* item = cJSON_New_Item(); if (item)item->type = b ? cJSON_True : cJSON_False; return item; }
 cJSON* cJSON_CreateNumber(double num) { cJSON* item = cJSON_New_Item(); if (item) { item->type = cJSON_Number; item->valuedouble = num; item->valueint = (int)num; }return item; }
 cJSON* cJSON_CreateString(const char* string) { cJSON* item = cJSON_New_Item(); if (item) { item->type = cJSON_String; item->valuestring = cJSON_strdup(string); }return item; }
+cJSON* cJSON_CreateBareString(const char* string) { cJSON* item = cJSON_New_Item(); if (item) { item->type = cJSON_BareString; item->valuestring = cJSON_strdup(string); }return item; }
 cJSON* cJSON_CreateArray(void) { cJSON* item = cJSON_New_Item(); if (item)item->type = cJSON_Array; return item; }
 cJSON* cJSON_CreateObject(void) { cJSON* item = cJSON_New_Item(); if (item)item->type = cJSON_Object; return item; }
 
 /* Create Arrays: */
-cJSON* cJSON_CreateIntArray(const int* numbers, int count) 
+cJSON* cJSON_CreateIntArray(const int* numbers, int count)
 {
-	int i; 
-	cJSON* n = 0, * p = 0, * a = cJSON_CreateArray(); 
-	for (i = 0; a && i < count; i++) 
-	{ 
-		n = cJSON_CreateNumber(numbers[i]);
-		if (!i)
-			a->child = n;
-		else 
-			suffix_object(p, n);
-		p = n; 
-	}
-	return a;
-}
-
-cJSON* cJSON_CreateFloatArray(const float* numbers, int count) 
-{ 
 	int i;
 	cJSON* n = 0, * p = 0, * a = cJSON_CreateArray();
-	for (i = 0; a && i < count; i++) 
-	{ 
-		n = cJSON_CreateNumber(numbers[i]);
-		if (!i)
-			a->child = n;
-		else 
-			suffix_object(p, n);
-		p = n; 
-	}
-	return a; 
-}
-
-cJSON* cJSON_CreateDoubleArray(const double* numbers, int count) 
-{ 
-	int i;
-	cJSON* n = 0, * p = 0, * a = cJSON_CreateArray(); 
-	for (i = 0; a && i < count; i++) 
+	for (i = 0; a && i < count; i++)
 	{
 		n = cJSON_CreateNumber(numbers[i]);
 		if (!i)
 			a->child = n;
 		else
 			suffix_object(p, n);
-		p = n; 
+		p = n;
 	}
-	return a; 
+	return a;
 }
 
-cJSON* cJSON_CreateStringArray(const char** strings, int count) 
-{ 
+cJSON* cJSON_CreateFloatArray(const float* numbers, int count)
+{
 	int i;
 	cJSON* n = 0, * p = 0, * a = cJSON_CreateArray();
-	for (i = 0; a && i < count; i++) 
+	for (i = 0; a && i < count; i++)
 	{
-		n = cJSON_CreateString(strings[i]); 
+		n = cJSON_CreateNumber(numbers[i]);
 		if (!i)
 			a->child = n;
-		else 
+		else
+			suffix_object(p, n);
+		p = n;
+	}
+	return a;
+}
+
+cJSON* cJSON_CreateDoubleArray(const double* numbers, int count)
+{
+	int i;
+	cJSON* n = 0, * p = 0, * a = cJSON_CreateArray();
+	for (i = 0; a && i < count; i++)
+	{
+		n = cJSON_CreateNumber(numbers[i]);
+		if (!i)
+			a->child = n;
+		else
+			suffix_object(p, n);
+		p = n;
+	}
+	return a;
+}
+
+cJSON* cJSON_CreateStringArray(const char** strings, int count)
+{
+	int i;
+	cJSON* n = 0, * p = 0, * a = cJSON_CreateArray();
+	for (i = 0; a && i < count; i++)
+	{
+		n = cJSON_CreateString(strings[i]);
+		if (!i)
+			a->child = n;
+		else
 			suffix_object(p, n);
 		p = n;
 	}
 
-	return a; 
+	return a;
 }
 
 // 复制
