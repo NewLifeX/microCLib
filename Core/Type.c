@@ -12,8 +12,8 @@ __attribute__((weak)) MallocFunc	 GlobleMalloc = malloc;
 __attribute__((weak)) FreeFunc    GlobleFree = free;
 #endif
 
-__inline void InitBuffer(Buffer_t* data) { memset(data, 0x00, sizeof(Buffer_t)); }
-__inline void InitBuffer2(Buffer2_t* data) { memset(data, 0x00, sizeof(Buffer2_t)); }
+__inline void InitBuffer(Buffer_t* data)	{ memset(data, 0x00, sizeof(Buffer_t));	data->free = GlobleFree;}
+__inline void InitBuffer2(Buffer2_t* data)	{ memset(data, 0x00, sizeof(Buffer2_t));data->free = GlobleFree;}
 
 __inline void TryCleanBuffer(Buffer_t* data)
 {
@@ -52,7 +52,7 @@ void ShowArray(char* name, byte* pdata, int datalen, int showlen)
 		for (int i = 0; i < printlen; i++)
 		{
 			if (i % 32 == 0)DebugPrintf("\r\n");
-			DebugPrintf("%02X-", pdata[i]);
+			DebugPrintf("%02X ", pdata[i]);
 		}
 	}
 	else

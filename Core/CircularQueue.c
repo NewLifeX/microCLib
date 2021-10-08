@@ -348,6 +348,8 @@ void CircularQueueShow(CircularQueue_t* queue, int showlen)
 	byte* p = (byte*)queue->pTail;
 	byte* memend = queue->MemEnd;
 
+	DebugPrintf("[%d] ",currlen);
+
 	for (int i = 0; i < showlen; i++)
 	{
 		if ((i % 32 == 0) && (i != 0))DebugPrintf("\r\n");

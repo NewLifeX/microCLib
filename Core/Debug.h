@@ -97,6 +97,7 @@ void TraceShow(void);
 #define ErrPrintf( ... )
 #define WarningPrintf( ... )
 #define DebugPrintf( ... )
+#define TraceThis( ... )
 #endif
 
 #endif
