@@ -3,8 +3,6 @@
 #define __SPI_H__
 
 #include "Pin.h"
-// #include "Dma.h"
-#include "Include.h"
 
 /*
 *	   pin
@@ -50,8 +48,8 @@
 // 发送数据长度
 typedef enum
 {
-	SpiBits8 = SPI_FRAMESIZE_8BIT,		// SPI_DataSize_8b
-	SpiBits16 = SPI_FRAMESIZE_16BIT,		// SPI_DataSize_16b
+	SpiBits8 ,		
+	SpiBits16 ,		
 }SpiBits_t;
 
 // spi有4钟工作模式  具体参考如下网页
@@ -68,8 +66,8 @@ typedef enum
 // 传输序列顺序
 typedef enum
 {
-	SpiLSB = SPI_ENDIAN_LSB,
-	SpiMSB = SPI_ENDIAN_MSB,
+	SpiLSB ,
+	SpiMSB ,
 }SpiFirstBit_t;
 
 // Spi 参数配置

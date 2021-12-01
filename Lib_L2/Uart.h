@@ -1,11 +1,8 @@
 ﻿
-#ifndef __UART_H__
-#define __UART_H__
+#pragma once
 
 #include "Pin.h"
 #include "Type.h"
-#include "Include.h"
-// #include "Dma.h"
 
 // 串口中断类型，用于注册中断（可以 | 操作）
 #define UART_IT_FLAG_TX                      ((uint16_t)0x0001)
@@ -76,8 +73,10 @@ uint16_t UartGetChar(ComName com);
 
 void UartPutChar(ComName com, uint16_t data, bool delay);
 
-void UartSetInterrupt(ComName com, uint16_t ITFlag, uint8_t prePriority,
-	uint8_t subPriority, UartIrqHandler irqHandler, void* param);
+void UartSend(ComName com, byte* data, int len);
+
+void UartSetInterrupt(ComName com, uint16_t ITFlag, uint8_t prePriority, uint8_t subPriority,
+	UartIrqHandler irqHandler, void* irqParam);
 
 void UartITConfig(ComName com, uint16_t ITFlag, bool enable);
 
@@ -97,5 +96,3 @@ void UartSetCts(ComName com, bool value);
 *	UartInit(COM1);		// 内部对引脚只做了判空，没有校验是否是相应COM口的引脚
 *	UartSetInterrupt( COM1, UART_IT_FLAG_TX | UART_IT_FLAG_RX, 0, 0, UartTransparentRxTx );
 */
-
-#endif  // __UART_H__

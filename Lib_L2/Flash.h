@@ -2,24 +2,19 @@
 #ifndef __FLASH_H__
 #define __FLASH_H__
 
-#include "Type.h"
+typedef char					sbyte;
+typedef unsigned char			byte;
+typedef unsigned short			ushort;
+typedef unsigned int			uint;
+typedef long long int			int64;
+typedef unsigned long long int	uint64;
 
-// 由于会在bootload使用，所以不包含外部头文件。
-// 以最小化为主
-
-// typedef char					sbyte;
-// typedef unsigned char			byte;
-// typedef unsigned short			ushort;
-// typedef unsigned int			uint;
-// typedef long long int			int64;
-// typedef unsigned long long int	uint64;
-// 
-// #include <stdbool.h>
-// #include <stdlib.h>
-// #include <stdio.h>
-// #include <string.h>
-// #include <stdint.h>
-// #include <cType.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdint.h>
+#include <cType.h>
 
 // 写一个 Block  长度不能大于 BlockSize		不禁用中断，外部需要处理禁用中断
 bool WriteBlock(uint address, byte* buf, int len, bool closeHsi);
