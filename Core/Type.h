@@ -10,6 +10,7 @@ typedef unsigned long long int	uint64;
 
 // 系统时间使用64bit  （32bit不够用）
 typedef uint64 Time_t;
+#define Time_Max (UINT64_MAX - 60000)
 
 #include <stdbool.h>
 #include <stdlib.h>

@@ -34,6 +34,7 @@ bool GetDebugStat(void);
 void Trace(const char* str);
 void UnTrace(void);
 void TraceShow(void);
+#define TraceCall(expr)			Trace(#expr);expr;UnTrace()
 
 // KEIL 5.1 版本以上拥有 Arcc Clang 两套编译器 此处做出适配。
 #if  !(defined ( __CC_ARM ) || defined ( __GNUC__ ))
@@ -65,6 +66,7 @@ void TraceShow(void);
 #define DebugPrintf( ... )		DEBUG_LEVEL(DebugNormal,  ##__VA_ARGS__ )
 
 #define TraceThis()				Trace(##__func__)
+
 #endif
 
 #if defined ( __GNUC__ )
