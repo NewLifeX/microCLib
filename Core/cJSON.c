@@ -25,7 +25,7 @@ static int cJSON_strcasecmp(const char* s1, const char* s2)
 }
 
 static void* (*cJSON_malloc)(size_t sz);
-static void (*cJSON_free)(void* ptr);
+void (*cJSON_free)(void* ptr);
 
 // ¸´ÖÆÖµ¡£
 static char* cJSON_strdup(const char* str)

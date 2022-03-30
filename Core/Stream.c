@@ -251,7 +251,7 @@ void AutoStreamInit(Stream_t* st, int len, MemOptions_t* opt)
 
 	if (p != NULL)
 	{
-		StreamInit(st, p, 128);
+		StreamInit(st, p, len);
 	}
 	else
 	{

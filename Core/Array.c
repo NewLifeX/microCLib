@@ -34,6 +34,19 @@ int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen)
 	return -1;
 }
 
+int ArrayIndexOf_Byte(byte* src, int len, byte by)
+{
+	if (src == NULL)return -1;
+	if (len < 1)return -1;
+
+	for (int i = 0; i < len; i++)
+	{
+		if (src[i] == by)return i;
+	}
+
+	return -1;
+}
+
 int ArrayIndexOf_Offset(byte* src, int srclen, byte* sub, int sublen, int offset)
 {
 	if (src == NULL)return -1;
@@ -45,11 +58,27 @@ int ArrayIndexOf_Offset(byte* src, int srclen, byte* sub, int sublen, int offset
 	if (srclen < 1)return -1;
 	if (sublen < 1)return -1;
 	if (srclen < sublen)return -1;
-	
+
 	int idx = ArrayIndexOf(src, srclen, sub, sublen);
 	if (idx < 0)return -1;
 
 	return idx + offset;
+}
+
+int ArrayIndexOf_Byte_Offset(byte* src, int len, byte by, int offset)
+{
+	src += offset;
+	len -= offset;
+
+	if (src == NULL)return -1;
+	if (len < 1)return -1;
+
+	for (int i = 0; i < len; i++)
+	{
+		if (src[i] == by)return i + offset;
+	}
+
+	return -1;
 }
 
 int ArrayIndexOfBuff(Buffer_t* src, Buffer_t* sub)
@@ -154,7 +183,7 @@ void ArrayReverseBuff2(Buffer2_t* buff)
 
 void ArraySortByte(byte* data, int len)
 {
-	for (int i = 0; i < len - 1; i++) 
+	for (int i = 0; i < len - 1; i++)
 	{
 		for (int j = 0; j < len - 1 - i; j++)
 		{
@@ -170,7 +199,7 @@ void ArraySortByte(byte* data, int len)
 
 void ArraySortUint(uint* data, int len)
 {
-	for (int i = 0; i < len - 1; i++) 
+	for (int i = 0; i < len - 1; i++)
 	{
 		for (int j = 0; j < len - 1 - i; j++)
 		{
@@ -205,7 +234,7 @@ bool ArrayEqual(byte* b1, byte* b2, int len)
 	if (b1 == NULL)return false;
 	if (b2 == NULL)return false;
 	if (len < 1)return false;
-	
+
 	for (int i = 0; i < len; i++)
 	{
 		if (b1[i] != b2[i])return false;

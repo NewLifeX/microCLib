@@ -126,3 +126,8 @@ int CharIsChars(char src, char* chars, int chlen)
 
 	return -1;
 }
+
+bool StringCmp(char* s1, char* s2)
+{
+	return (strcmp(s1, s2) == 0);
+}

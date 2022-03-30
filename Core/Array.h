@@ -5,7 +5,11 @@
 // 返回第一个符合的位置
 // 没有找到返回 -1
 int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen);
+int ArrayIndexOf_Byte(byte* src, int len, byte by);
+
 int ArrayIndexOf_Offset(byte* src, int srclen, byte* sub, int sublen, int offset);
+int ArrayIndexOf_Byte_Offset(byte* src, int srclen, byte by, int offset);
+
 int ArrayIndexOfBuff(Buffer_t* src,Buffer_t* sub);
 int ArrayIndexOfBuff2(Buffer2_t* src, Buffer2_t* sub);
 

@@ -93,6 +93,7 @@ void TraceShow(void);
 #define DebugPrintf( ... )		DEBUG_LEVEL(DebugNormal,  	__VA_ARGS__ )
 
 #define TraceThis()		Trace(__func__)
+
 #endif
 
 #else

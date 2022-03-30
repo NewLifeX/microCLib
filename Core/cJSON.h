@@ -53,6 +53,8 @@ typedef struct cJSON_Hooks
 	void (*free_fn)(void* ptr);
 } cJSON_Hooks;
 
+extern void (*cJSON_free)(void* ptr);
+
 /* Supply malloc, realloc and free functions to cJSON */
 void cJSON_InitHooks(cJSON_Hooks* hooks);
 
@@ -61,6 +63,7 @@ cJSON* cJSON_Parse(const char* value);
 /* Render a cJSON entity to text for transfer/storage. Free the char* when finished. */
 char* cJSON_Print(cJSON* item);
 /* Render a cJSON entity to text for transfer/storage without any formatting. Free the char* when finished. */
+// 获得指针必须使用  cJSON_free 释放。否则内存溢出
 char* cJSON_PrintUnformatted(cJSON* item);
 /* Delete a cJSON entity and all subentities. */
 void   cJSON_Delete(cJSON* c);

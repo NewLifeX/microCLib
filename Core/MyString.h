@@ -31,3 +31,7 @@ int StringFindStrs(char* src, char** subs, int subslen);
 
 // src 是 chars 中的哪一个，chlen 是 chars 个数。
 int CharIsChars(char src, char* chars, int chlen);
+
+// 比较字符串是否相等
+bool StringCmp(char* s1, char* s2);
+
