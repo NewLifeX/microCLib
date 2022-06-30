@@ -54,7 +54,7 @@ int CircularQueueWrites(CircularQueue_t* queue, byte* pdata, int len)
 	{
 		memcpy((byte*)queue->pHead, pdata, len);
 		queue->pHead += len;
-		if (queue->pHead == queue->MemEnd)queue->pHead = queue->MemStart;
+		if (queue->pHead >= queue->MemEnd)queue->pHead = queue->MemStart;
 		return len;
 	}
 	else
@@ -99,7 +99,7 @@ int CircularQueueWriteCompressionUint(CircularQueue_t* queue, uint data)
 
 		*head = d;
 		head++;
-		if (head > queue->MemEnd)head = queue->MemStart;
+		if (head >= queue->MemEnd)head = queue->MemStart;
 	} while (data > 0);
 
 	queue->pHead = head;
@@ -209,6 +209,11 @@ int CircularQueueReadCompressionUint(CircularQueue_t* queue, uint* data)
 
 	// 读指针。copy出来使用，避免读失败造成 queue->pTail 无法复原
 	byte* tail = (byte*)queue->pTail;
+	if (tail >= queue->MemEnd)
+	{
+		tail = queue->MemStart;
+		DebugPrintf("tail >= queue->MemEnd\r\n");
+	}
 
 	// 结果值
 	uint res = 0;
@@ -219,14 +224,14 @@ int CircularQueueReadCompressionUint(CircularQueue_t* queue, uint* data)
 	for (int i = 0; i < remain; i++)
 	{
 		// 取7bit  然后按照次数往后填充。
-		uint temp = (*tail & 0x7f) << mov;
-		res |= temp;
+		uint tp = *tail;
+		res |= ((tp & 0x7f) << mov);
 		mov += 7;
 
 		tail++;
 		if (tail >= queue->MemEnd) tail = queue->MemStart;
-		
-		if ((temp & 0x80) == 0)
+
+		if ((tp & 0x80) != 0x80)
 		{
 			// 下标跟长度的转换。
 			len = i + 1;
@@ -274,7 +279,7 @@ uint CircularQueueSeek(CircularQueue_t* queue, uint offset)
 
 	// 有效数据大于需要seek的数据长度。
 	uint newTail = (uint)queue->pTail + offset;
-	if (newTail > (uint)queue->MemEnd) newTail -= queuelen;
+	if (newTail >= (uint)queue->MemEnd) newTail -= queuelen;
 	queue->pTail = (byte*)newTail;
 
 	return offset;

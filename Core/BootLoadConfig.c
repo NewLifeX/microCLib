@@ -2,7 +2,6 @@
 #include "BootLoadConfig.h"
 #include "Flash.h"
 #include "Crc.h"
-#include "arm_compat.h"
 
 #define DisableIrq() __disable_irq()
 #define EnableIrq() __enable_irq()
