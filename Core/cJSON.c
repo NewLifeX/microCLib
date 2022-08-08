@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Type.h"
 #include "cJSON.h"
 
@@ -27,22 +27,22 @@ static int cJSON_strcasecmp(const char* s1, const char* s2)
 static void* (*cJSON_malloc)(size_t sz);
 void (*cJSON_free)(void* ptr);
 
-// ¸´ÖÆÖµ¡£
+// å¤åˆ¶å€¼ã€‚
 static char* cJSON_strdup(const char* str)
 {
-	// ¼ÆËãÔ­str ³¤¶È¡£
+	// è®¡ç®—åŸstr é•¿åº¦ã€‚
 	size_t len = strlen(str) + 1;
 
-	// ´´½¨»º³åÇø
+	// åˆ›å»ºç¼“å†²åŒº
 	char* rs = (char*)cJSON_malloc(len);
 	if (rs == NULL)return NULL;
 
-	// ¸´ÖÆ
+	// å¤åˆ¶
 	memcpy(rs, str, len);
 	return rs;
 }
 
-// ÉèÖÃ malloc free
+// è®¾ç½® malloc free
 void cJSON_InitHooks(cJSON_Hooks* hooks)
 {
 	if (!hooks)
@@ -56,7 +56,7 @@ void cJSON_InitHooks(cJSON_Hooks* hooks)
 	cJSON_free = (hooks->free_fn) ? hooks->free_fn : GlobleFree;
 }
 
-// ´´½¨Ò»¸öÃûÖµ¶Ô
+// åˆ›å»ºä¸€ä¸ªåå€¼å¯¹
 static cJSON* cJSON_New_Item(void)
 {
 	cJSON* node = (cJSON*)cJSON_malloc(sizeof(cJSON));
@@ -65,44 +65,44 @@ static cJSON* cJSON_New_Item(void)
 	return node;
 }
 
-// É¾³ıÃûÖµ¶Ô
+// åˆ é™¤åå€¼å¯¹
 void cJSON_Delete(cJSON* c)
 {
 	cJSON* next;
 	while (c)
 	{
 		next = c->next;
-		// µİ¹éÊÍ·Å½Úµã
+		// é€’å½’é‡Šæ”¾èŠ‚ç‚¹
 		if (!(c->type & cJSON_IsReference) && c->child) cJSON_Delete(c->child);
 
-		// ÊÍ·Å±¾½Úµã ÃûÖµ ¶Ô
+		// é‡Šæ”¾æœ¬èŠ‚ç‚¹ åå€¼ å¯¹
 		if (!(c->type & cJSON_IsReference) && c->valuestring) cJSON_free(c->valuestring);
 		if (c->string) cJSON_free(c->string);
 
-		// ÊÍ·Å½Úµã½á¹¹Ìå
+		// é‡Šæ”¾èŠ‚ç‚¹ç»“æ„ä½“
 		cJSON_free(c);
 		c = next;
 	}
 }
 
-// ½âÎöÊı×ÖÖµ¡£
+// è§£ææ•°å­—å€¼ã€‚
 static const char* parse_number(cJSON* item, const char* num)
 {
 	char* numbak = (char*)num;
 
-	// sign Õı¸ºÊı·ûºÅ
-	// scale Ğ¡ÊıµãÎ»ÖÃ
-	// subscale ¿ÆÑ§¼ÆÊı·¨ a x 10^n µÄ n Öµ¡£
-	// signsubscale	¿ÆÑ§¼ÆÊı·¨ a x 10^n µÄ n ·ûºÅ¡£
+	// sign æ­£è´Ÿæ•°ç¬¦å·
+	// scale å°æ•°ç‚¹ä½ç½®
+	// subscale ç§‘å­¦è®¡æ•°æ³• a x 10^n çš„ n å€¼ã€‚
+	// signsubscale	ç§‘å­¦è®¡æ•°æ³• a x 10^n çš„ n ç¬¦å·ã€‚
 	double n = 0, sign = 1, scale = 0; int subscale = 0, signsubscale = 1;
 
-	// ¸ºÖµ
+	// è´Ÿå€¼
 	if (*num == '-') sign = -1, num++;	/* Has sign? */
 
-	// 0´¦Àí
+	// 0å¤„ç†
 	if (*num == '0') num++;			/* is zero */
 
-	// ÕûÊı
+	// æ•´æ•°
 	if (*num >= '1' && *num <= '9')
 	{
 		do
@@ -111,7 +111,7 @@ static const char* parse_number(cJSON* item, const char* num)
 		} while (*num >= '0' && *num <= '9');	/* Number? */
 	}
 
-	// ´¦ÀíĞ¡Êı¡£
+	// å¤„ç†å°æ•°ã€‚
 	if (*num == '.' && num[1] >= '0' && num[1] <= '9')
 	{
 		num++;
@@ -121,7 +121,7 @@ static const char* parse_number(cJSON* item, const char* num)
 		} while (*num >= '0' && *num <= '9');
 	}
 
-	// ¿ÆÑ§¼ÆÊı·¨µÄ±êÖ¾
+	// ç§‘å­¦è®¡æ•°æ³•çš„æ ‡å¿—
 	if (*num == 'e' || *num == 'E')		/* Exponent? */
 	{
 		num++; if (*num == '+') num++;	else if (*num == '-') signsubscale = -1, num++;
@@ -146,7 +146,7 @@ static const char* parse_number(cJSON* item, const char* num)
 	return num;
 }
 
-// ´òÓ¡Êı×Ö
+// æ‰“å°æ•°å­—
 static char* print_number(cJSON* item)
 {
 	char* str;
@@ -175,8 +175,8 @@ static char* print_number(cJSON* item)
 	return str;
 }
 
-// BCD ±àÂë£¿
-// 16½øÖÆ 4 ×Ö½Ú×Ö·û´®£¬±ä³É ushort ¶ş½øÖÆ¡£
+// BCD ç¼–ç ï¼Ÿ
+// 16è¿›åˆ¶ 4 å­—èŠ‚å­—ç¬¦ä¸²ï¼Œå˜æˆ ushort äºŒè¿›åˆ¶ã€‚
 // "89AB" => 0x89ab => byte[]{ 0xab, 0xab }
 static unsigned parse_hex4(const char* str)
 {
@@ -212,7 +212,7 @@ static unsigned parse_hex4(const char* str)
 
 /* Parse the input text into an unescaped cstring, and populate item. */
 static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
-// ½âÎö×Ö·û´®
+// è§£æå­—ç¬¦ä¸²
 static const char* parse_string(cJSON* item, const char* str)
 {
 	const char* ptr = str + 1;
@@ -221,12 +221,12 @@ static const char* parse_string(cJSON* item, const char* str)
 	int len = 0;
 	unsigned uc, uc2;
 
-	// ÅĞÎó
+	// åˆ¤è¯¯
 	if (*str != '\"') { ep = str; return 0; }
-	// Ìø¹ı×ªÒå·ûºÅ
+	// è·³è¿‡è½¬ä¹‰ç¬¦å·
 	while (*ptr != '\"' && *ptr && ++len) if (*ptr++ == '\\') ptr++;
 
-	// ´´½¨Êä³ö×Ö·û´®¡£
+	// åˆ›å»ºè¾“å‡ºå­—ç¬¦ä¸²ã€‚
 	out = (char*)cJSON_malloc(len + 1);
 	if (!out) return 0;
 
@@ -249,10 +249,10 @@ static const char* parse_string(cJSON* item, const char* str)
 				/* transcode utf16 to utf8. */
 				/* get the unicode char. */
 				uc = parse_hex4(ptr + 1); ptr += 4;
-				// ÅĞ¶ÏÊÇ·ñºÏ·¨
+				// åˆ¤æ–­æ˜¯å¦åˆæ³•
 				if ((uc >= 0xDC00 && uc <= 0xDFFF) || uc == 0)	break;	/* check for invalid.	*/
 
-				// UTF16 ·¶Î§
+				// UTF16 èŒƒå›´
 				if (uc >= 0xD800 && uc <= 0xDBFF)	/* UTF16 surrogate pairs.	*/
 				{
 					if (ptr[1] != '\\' || ptr[2] != 'u')	break;	/* missing second-half of surrogate.	*/
@@ -425,7 +425,7 @@ static const char* parse_value(cJSON* item, const char* value)
 	if (*value == '[') { return parse_array(item, value); }
 	if (*value == '{') { return parse_object(item, value); }
 
-	// ´íÎó¶¨Î»
+	// é”™è¯¯å®šä½
 	ep = value;
 	return NULL;
 }
@@ -716,7 +716,7 @@ static char* print_object(cJSON* item, int depth, int fmt)
 		strcpy(ptr, entries[i]);
 		ptr += strlen(entries[i]);
 
-		// ·Ö¸î
+		// åˆ†å‰²
 		if (i != numentries - 1) *ptr++ = ',';
 		if (fmt) *ptr++ = '\n'; *ptr = 0;
 		cJSON_free(names[i]); cJSON_free(entries[i]);
@@ -918,7 +918,7 @@ cJSON* cJSON_CreateStringArray(const char** strings, int count)
 	return a;
 }
 
-// ¸´ÖÆ
+// å¤åˆ¶
 cJSON* cJSON_Duplicate(cJSON* item, int recurse)
 {
 	if (!item) return 0;
@@ -960,8 +960,8 @@ cJSON* cJSON_Duplicate(cJSON* item, int recurse)
 	cptr = item->child;
 	while (cptr)
 	{
-		// Duplicate (with recurse) each item in the ->next chain¡£ 
-		// µİ¹é±éÀú
+		// Duplicate (with recurse) each item in the ->next chainã€‚ 
+		// é€’å½’éå†
 		newchild = cJSON_Duplicate(cptr, 1);
 
 		if (!newchild)
@@ -987,7 +987,7 @@ cJSON* cJSON_Duplicate(cJSON* item, int recurse)
 	return newitem;
 }
 
-// ËõĞ¡£¬ É¾³ıÒ»¶Ñ²»¿É¼û×Ö·û£¬»Ø³µ»»ĞĞµÈ¡£
+// ç¼©å°ï¼Œ åˆ é™¤ä¸€å †ä¸å¯è§å­—ç¬¦ï¼Œå›è½¦æ¢è¡Œç­‰ã€‚
 void cJSON_Minify(char* json)
 {
 	char* into = json;

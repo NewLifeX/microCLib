@@ -1,4 +1,4 @@
-
+ï»¿
 #pragma once
 
 #include "Type.h"
@@ -11,38 +11,38 @@
 #define cJSON_String 4
 #define cJSON_Array 5
 #define cJSON_Object 6
-// ×Ô¶¨Òå×Ö·û´®£¬²»ÐèÒªÌí¼ÓË«ÒýºÅ
+// è‡ªå®šä¹‰å­—ç¬¦ä¸²ï¼Œä¸éœ€è¦æ·»åŠ åŒå¼•å·
 #define cJSON_BareString 7
 #define cJSON_IsReference 256
 
 // The cJSON structure
 typedef struct cJSON
 {
-	// Ë«ÏòÁ´±í
+	// åŒå‘é“¾è¡¨
 	// next/prev allow you to walk array/object chains. Alternatively, use GetArraySize/GetArrayItem/GetObjectItem.
 	struct cJSON* next, * prev;
-	// ½ÚµãÏî
+	// èŠ‚ç‚¹é¡¹
 	// An array or object item will have a child pointer pointing to a chain of the items in the array/object. 
 	struct cJSON* child;
 
-	// ÀàÐÍ
+	// ç±»åž‹
 	// The type of the item, as above.
 	int type;
 
-	// 8×Ö½ÚµÄValue£¬¿ÉÒÔ³ÐÔØËùÓÐÀàÐÍÁË¡£
+	// 8å­—èŠ‚çš„Valueï¼Œå¯ä»¥æ‰¿è½½æ‰€æœ‰ç±»åž‹äº†ã€‚
 	byte Value[8];
 
 
-	// ×Ö·û´®Öµ
+	// å­—ç¬¦ä¸²å€¼
 	// The item's string, if type==cJSON_String
 	char* valuestring;
-	// ÊýÖµÀàÐÍÖµ
+	// æ•°å€¼ç±»åž‹å€¼
 	// The item's number, if type==cJSON_Number 
 	int valueint;
-	// ¸¡µãÊýÖµÀàÐÍ
+	// æµ®ç‚¹æ•°å€¼ç±»åž‹
 	// The item's number, if type==cJSON_Number 
 	double valuedouble;
-	// Ãû³Æ
+	// åç§°
 	// The item's name string, if this item is the child of, or is in the list of subitems of an object.
 	char* string;
 } cJSON;
@@ -63,7 +63,7 @@ cJSON* cJSON_Parse(const char* value);
 /* Render a cJSON entity to text for transfer/storage. Free the char* when finished. */
 char* cJSON_Print(cJSON* item);
 /* Render a cJSON entity to text for transfer/storage without any formatting. Free the char* when finished. */
-// »ñµÃÖ¸Õë±ØÐëÊ¹ÓÃ  cJSON_free ÊÍ·Å¡£·ñÔòÄÚ´æÒç³ö
+// èŽ·å¾—æŒ‡é’ˆå¿…é¡»ä½¿ç”¨  cJSON_free é‡Šæ”¾ã€‚å¦åˆ™å†…å­˜æº¢å‡º
 char* cJSON_PrintUnformatted(cJSON* item);
 /* Delete a cJSON entity and all subentities. */
 void   cJSON_Delete(cJSON* c);
@@ -123,7 +123,7 @@ The item->next and ->prev pointers are always zero on return from Duplicate. */
 /* ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed. */
 cJSON* cJSON_ParseWithOpts(const char* value, const char** return_parse_end, int require_null_terminated);
 
-// ËõÐ¡
+// ç¼©å°
 void cJSON_Minify(char* json);
 
 // Macros for creating things quickly.
@@ -135,7 +135,7 @@ void cJSON_Minify(char* json);
 #define cJSON_AddStringToObject(object,name,s)	cJSON_AddItemToObject(object, name, cJSON_CreateString(s))
 #define cJSON_AddBareStringToObject(object,name,s)	cJSON_AddItemToObject(object, name, cJSON_CreateBareString(s))
 
-// ÉèÖÃÖµ
+// è®¾ç½®å€¼
 // When assigning an integer value, it needs to be propagated to valuedouble too.
 #define cJSON_SetIntValue(object,val)			((object)?(object)->valueint=(object)->valuedouble=(val):(val))
 

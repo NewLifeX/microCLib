@@ -1,4 +1,4 @@
-
+ï»¿
 #include "OtaImageLoad.h"
 #include "BootLoadConfig.h"
 #include "Crc.h"
@@ -9,13 +9,13 @@
 #endif
 
 #ifndef OTAFLASHSIZE
-//(µÚÒ»Æ¬ FLASH ´óĞ¡  -  (BOOTLOAD´óĞ¡ + 1KÅäÖÃÇø))/ 2
-// Á½¸öAPPÎ»ÖÃÆ½·Ö³ıÈ¥BOOTLOAD¡¢ÅäÖÃÇøµÄÊ£Óà¿Õ¼ä¡£
+//(ç¬¬ä¸€ç‰‡ FLASH å¤§å°  -  (BOOTLOADå¤§å° + 1Ké…ç½®åŒº))/ 2
+// ä¸¤ä¸ªAPPä½ç½®å¹³åˆ†é™¤å»BOOTLOADã€é…ç½®åŒºçš„å‰©ä½™ç©ºé—´ã€‚
 #define OTAFLASHSIZE ((GetChipSize(0)-(BootLoadFlashSize+1024))/2)
 #endif
 
 #ifndef OTAFLASHADDRESS
-// BOOTLOAD APP  Á½¸öÎ»ÖÃºóÃæ¾ÍÊÇ  OTA³ÌĞò´æ´¢¿Õ¼äÁË¡£
+// BOOTLOAD APP  ä¸¤ä¸ªä½ç½®åé¢å°±æ˜¯  OTAç¨‹åºå­˜å‚¨ç©ºé—´äº†ã€‚
 #define OTAFLASHADDRESS (GetChipStartAddr(0)+OTAFLASHSIZE+BootLoadFlashSize)
 #endif
 
@@ -25,7 +25,7 @@ bool OtaImageSet(uint offset, byte* data, int len)
 	int baseaddr = OTAFLASHADDRESS;
 	int patitionSize = OTAFLASHSIZE;
 
-	// Ô½½ç¼ì²é
+	// è¶Šç•Œæ£€æŸ¥
 	if (offset + len > patitionSize)return false;
 
 	return FlashWrite(baseaddr + offset, data, len, true);
@@ -57,7 +57,7 @@ uint OtaImageCrc(uint offset, int len)
 	int baseaddr = OTAFLASHADDRESS;
 	int patitionSize = OTAFLASHSIZE;
 
-	// Ô½½ç¼ì²é
+	// è¶Šç•Œæ£€æŸ¥
 	if (offset + len > patitionSize)return false;
 
 	uint crc = OTACRCFUNC((byte*)(baseaddr + offset), len);
@@ -70,7 +70,7 @@ bool OtaImageCrcCheck(uint offset, int len, uint crc2)
 	int baseaddr = OTAFLASHADDRESS;
 	int patitionSize = OTAFLASHSIZE;
 
-	// Ô½½ç¼ì²é
+	// è¶Šç•Œæ£€æŸ¥
 	if (offset + len > patitionSize)return false;
 
 	uint crc = OTACRCFUNC((byte*)(baseaddr + offset), len);
@@ -82,10 +82,10 @@ bool OtaImageCrcCheck(uint offset, int len, uint crc2)
 #include "Version.h"
 #include "HardwareVersion.h"
 
-/// <summary>¸üĞÂotaĞÅÏ¢£¬Æô¶¯Éı¼¶Ç°µÄ¶¯×÷</summary>
-/// <param name="size">ĞÂapp´óĞ¡</param>
-/// <param name="crc">ĞÂapp crc</param>
-/// <param name="version">°æ±¾£¬¿ÉÌî0</param>
+/// <summary>æ›´æ–°otaä¿¡æ¯ï¼Œå¯åŠ¨å‡çº§å‰çš„åŠ¨ä½œ</summary>
+/// <param name="size">æ–°appå¤§å°</param>
+/// <param name="crc">æ–°app crc</param>
+/// <param name="version">ç‰ˆæœ¬ï¼Œå¯å¡«0</param>
 /// <returns></returns>
 bool OtaUpdateImageInfo(int size, uint crc, uint version)
 {
@@ -103,7 +103,7 @@ bool OtaUpdateImageInfo(int size, uint crc, uint version)
 		return false;
 	}
 
-	// BOOTLOAD ²ÉÓÃ CRC32¡£
+	// BOOTLOAD é‡‡ç”¨ CRC32ã€‚
 	cfg.NewAppCrc32 = CaclcCRC32B((byte*)OTAFLASHADDRESS, size);
 
 	uint newhdver = GetHardwareVersion2(OTAFLASHADDRESS, size);

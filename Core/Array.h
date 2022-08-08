@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 
-// ·µ»ØµÚÒ»¸ö·ûºÏµÄÎ»ÖÃ
-// Ã»ÓĞÕÒµ½·µ»Ø -1
+// è¿”å›ç¬¬ä¸€ä¸ªç¬¦åˆçš„ä½ç½®
+// æ²¡æœ‰æ‰¾åˆ°è¿”å› -1
 int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen);
 int ArrayIndexOf_Byte(byte* src, int len, byte by);
 
@@ -13,27 +13,27 @@ int ArrayIndexOf_Byte_Offset(byte* src, int srclen, byte by, int offset);
 int ArrayIndexOfBuff(Buffer_t* src,Buffer_t* sub);
 int ArrayIndexOfBuff2(Buffer2_t* src, Buffer2_t* sub);
 
-// ´ÓÎ²²¿Æ¥Åä
-// ·µ»Ø´ÓÇ°ÍùºóµÄÏÂ±ê¡£
+// ä»å°¾éƒ¨åŒ¹é…
+// è¿”å›ä»å‰å¾€åçš„ä¸‹æ ‡ã€‚
 int ArrayLastIndexOf(byte* src, int srclen, byte* sub, int sublen);
 int ArrayLastIndexOfBuff(Buffer_t* src, Buffer_t* sub);
 int ArrayLastIndexOfBuff2(Buffer2_t* src, Buffer2_t* sub);
 
-// µ¹Ğò
+// å€’åº
 void ArrayReverse(byte* data, int len);
 void ArrayReverseBuff(Buffer_t* buff);
 void ArrayReverseBuff2(Buffer2_t* buff);
 
-// ÅÅĞò ´ÓĞ¡µ½´ó ÄÚ²¿Ê¹ÓÃÃ°ÅİÅÅĞò
+// æ’åº ä»å°åˆ°å¤§ å†…éƒ¨ä½¿ç”¨å†’æ³¡æ’åº
 void ArraySortByte(byte* data, int len);
 void ArraySortUint(uint* data, int len);
 void ArraySortInt(int* data, int len);
 
-// ÆäËû
-// copy Ö±½ÓÓÃ c ¿â
+// å…¶ä»–
+// copy ç›´æ¥ç”¨ c åº“
 
 
-// ¶Ô±ÈÊı×é£¬ÏàÍ¬·µ»Øtrue
+// å¯¹æ¯”æ•°ç»„ï¼Œç›¸åŒè¿”å›true
 bool ArrayEqual(byte* b1, byte* b2, int len);
 
 

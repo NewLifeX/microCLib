@@ -1,26 +1,26 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 
-// À´Ô´ÓÚ°¢ÀïIOT´úÂë  base64.h
+// æ¥æºäºé˜¿é‡ŒIOTä»£ç   base64.h
 
-// Êä³ö»º³åÇø²»¹»
+// è¾“å‡ºç¼“å†²åŒºä¸å¤Ÿ
 #define MBEDTLS_ERR_BASE64_BUFFER_TOO_SMALL               (-0x002A)
-// ÊäÈëÖĞµÄ×Ö·ûÎŞĞ§
+// è¾“å…¥ä¸­çš„å­—ç¬¦æ— æ•ˆ
 #define MBEDTLS_ERR_BASE64_INVALID_CHARACTER              (-0x002C)
 
 
-// dst  Ä¿±êÖ¸Õë
-// dlen Ä¿±ê»º³å´óĞ¡
-// olen Êµ¼ÊÊ¹ÓÃ³¤¶È
-// src  Ô´Ö¸Õë
-// slen Ô´³¤¶È
+// dst  ç›®æ ‡æŒ‡é’ˆ
+// dlen ç›®æ ‡ç¼“å†²å¤§å°
+// olen å®é™…ä½¿ç”¨é•¿åº¦
+// src  æºæŒ‡é’ˆ
+// slen æºé•¿åº¦
 
-// ±àÂë
-// BASE64 Encode ½á¹ûµÄ³¤¶È¼ÆËã:  (srclen / 3 ÏòÉÏÈ¡Õû) * 4
+// ç¼–ç 
+// BASE64 Encode ç»“æœçš„é•¿åº¦è®¡ç®—:  (srclen / 3 å‘ä¸Šå–æ•´) * 4
 // int mbedtls_base64_encode(unsigned char* dst, int dlen, int* olen, const unsigned char* src, int slen);
 int Base64Encode(byte* dst, int dlen, int* olen, byte* src, int slen);
 
-// ½â±àÂë
+// è§£ç¼–ç 
 // int mbedtls_base64_decode(unsigned char* dst, int dlen, int* olen, const unsigned char* src, int slen);
 int Base64Decode(byte* dst, int dlen, int* olen, byte* src, int slen);

@@ -1,24 +1,24 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 #include "BootLoadConfig.h"
 
-// dst ±ØĞëÊÇµÚÒ» chip¡£ 
-// ·µ»ØÊÇ·ñ³É¹¦¡£
+// dst å¿…é¡»æ˜¯ç¬¬ä¸€ chipã€‚ 
+// è¿”å›æ˜¯å¦æˆåŠŸã€‚
 bool CopyBin(uint dst, uint src, int size);
 
-// ¼ì²âĞÂAPP ÊÇ·ñÂú×ãÉı¼¶Ìõ¼ş
+// æ£€æµ‹æ–°APP æ˜¯å¦æ»¡è¶³å‡çº§æ¡ä»¶
 bool CheckNewApp(BootLoadConfig_t* cfg);
 
-// ¼ì²âºÍÉı¼¶¡£
+// æ£€æµ‹å’Œå‡çº§ã€‚
 bool CheckAddUpdate(BootLoadConfig_t* cfg);
 
-// BootLoad Ö÷ÒªÂß¼­¡£
+// BootLoad ä¸»è¦é€»è¾‘ã€‚
 void BootLoadMain(void);
 
-/*  BootLoad ¹¤³ÌÊµÀı£º
+/*  BootLoad å·¥ç¨‹å®ä¾‹ï¼š
 
-// ¹¤³ÌMainº¯ÊıÖ»ĞèÒªÅäÖÃÒ»ÏÂÆäËûĞÅÏ¢ È»ºóµ÷ÓÃ BootLoadMain() ¼´¿É
+// å·¥ç¨‹Mainå‡½æ•°åªéœ€è¦é…ç½®ä¸€ä¸‹å…¶ä»–ä¿¡æ¯ ç„¶åè°ƒç”¨ BootLoadMain() å³å¯
 int main(void)
 {
 	DebugInit();
@@ -29,7 +29,7 @@ int main(void)
 
 */
 
-// APP »áÓÃµ½µÄº¯Êı¡£
+// APP ä¼šç”¨åˆ°çš„å‡½æ•°ã€‚
 
-// ±£´æ BootLoad Éı¼¶ĞÅÏ¢¡£
+// ä¿å­˜ BootLoad å‡çº§ä¿¡æ¯ã€‚
 bool SaveUpdateConfig(uint appSaveAddr, uint appLoadAddr, int appSize, uint64 version);

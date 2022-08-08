@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Update.h"
 #include "Debug.h"
 
@@ -11,15 +11,15 @@
 
 bool DoUpdate(UpdateBinInfo_t* info, uint saveAddr, byte* bin)
 {
-	// ×î¶à³¢ÊÔĞ´3´Î
+	// æœ€å¤šå°è¯•å†™3æ¬¡
 	for (int i = 0; i < 3; i++)
 	{
-		// ÅúÁ¿Ğ´ Flash ¡£ ÔİÊ±Ö»Ö§³ÖĞ´µÚÒ»Æ¬Flash¡£ 
-		// ²»Ğ£ÑésaveaddrºÏ·¨ĞÔ¡£
+		// æ‰¹é‡å†™ Flash ã€‚ æš‚æ—¶åªæ”¯æŒå†™ç¬¬ä¸€ç‰‡Flashã€‚ 
+		// ä¸æ ¡éªŒsaveaddråˆæ³•æ€§ã€‚
 		if (FlashSaveBin(saveAddr, bin, info->Size))break;
 	}
 
-	// Ğ£ÑéFlashÄÚµÄbinÊÇ·ñÕıÈ·¡£
+	// æ ¡éªŒFlashå†…çš„binæ˜¯å¦æ­£ç¡®ã€‚
 	uint flashcrc = CaclcCRC32B((byte*)saveAddr, info->Size);
 	if (flashcrc != info->Crc32)return false;
 

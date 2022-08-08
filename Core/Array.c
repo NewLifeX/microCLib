@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Array.h"
 
 int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen)
@@ -11,23 +11,23 @@ int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen)
 	if (sub == NULL)return -1;
 
 	int i, j;
-	// Æ¥ÅäµÚÒ»¸ö×Ö½ÚµÄ×î´ó¿ÉÄÜ×Ö½ÚÊı¡£
+	// åŒ¹é…ç¬¬ä¸€ä¸ªå­—èŠ‚çš„æœ€å¤§å¯èƒ½å­—èŠ‚æ•°ã€‚
 	int maxsearch = srclen - sublen + 1;
 	for (i = 0; i < maxsearch; i++)
 	{
-		// ÕÒµ½µÚÒ»¸öÏàÍ¬×Ö½Ú
+		// æ‰¾åˆ°ç¬¬ä¸€ä¸ªç›¸åŒå­—èŠ‚
 		if (sub[0] == src[i])
 		{
-			// Æ¥ÅäºóĞø×Ö½Ú
+			// åŒ¹é…åç»­å­—èŠ‚
 			for (j = 1; j < sublen; j++)
 			{
 				if (sub[j] != src[i + j]) break;
 			}
 
-			// Æ¥Åä³É¹¦
+			// åŒ¹é…æˆåŠŸ
 			if (j == sublen) return i;
 
-			// Æ¥ÅäÊ§°ÜÔò¼ÌĞøÕÒµÚÒ»¸ö×Ö½Ú¡£
+			// åŒ¹é…å¤±è´¥åˆ™ç»§ç»­æ‰¾ç¬¬ä¸€ä¸ªå­—èŠ‚ã€‚
 		}
 	}
 
@@ -110,19 +110,19 @@ int ArrayLastIndexOf(byte* src, int srclen, byte* sub, int sublen)
 	int maxsearch = srclen - sublen + 1;
 	for (i = maxsearch; i >= 0; i--)
 	{
-		// ÕÒµ½µÚÒ»¸öÏàÍ¬×Ö½Ú
+		// æ‰¾åˆ°ç¬¬ä¸€ä¸ªç›¸åŒå­—èŠ‚
 		if (sub[0] == src[i])
 		{
-			// Æ¥ÅäºóĞø×Ö½Ú
+			// åŒ¹é…åç»­å­—èŠ‚
 			for (j = 1; j < sublen; j++)
 			{
 				if (sub[j] != src[i + j]) break;
 			}
 
-			// Æ¥Åä³É¹¦
+			// åŒ¹é…æˆåŠŸ
 			if (j == sublen) return i;
 
-			// Æ¥ÅäÊ§°ÜÔò¼ÌĞøÕÒµÚÒ»¸ö×Ö½Ú¡£
+			// åŒ¹é…å¤±è´¥åˆ™ç»§ç»­æ‰¾ç¬¬ä¸€ä¸ªå­—èŠ‚ã€‚
 		}
 	}
 
@@ -149,11 +149,11 @@ void ArrayReverse(byte* data, int len)
 {
 	if (data == NULL)return;
 	if (len < 2)return;
-	// ¼ÆÊı
+	// è®¡æ•°
 	int count = len / 2;
-	// »º´æ
+	// ç¼“å­˜
 	byte temp;
-	// Í·Î²
+	// å¤´å°¾
 	byte* head = data;
 	byte* end = data + len - 1;
 	for (int i = 0; i < count; i++)

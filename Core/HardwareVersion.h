@@ -1,33 +1,33 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 #include "HardwareInfo.h"
 
 /*
-ĞèÒª×ÔĞĞ¶¨Òå  HardwareInfo.h
+éœ€è¦è‡ªè¡Œå®šä¹‰  HardwareInfo.h
 
-ÄÚ²¿Ö»ÓĞÒ»ÏîÄÚÈİ¡£
-µçÂ·°åÈÕÆÚµÄdefine
-¸ñÊ½°´ÕÕ yyyy-MM-dd ¸ñÊ½Ğ´¡£
+å†…éƒ¨åªæœ‰ä¸€é¡¹å†…å®¹ã€‚
+ç”µè·¯æ¿æ—¥æœŸçš„define
+æ ¼å¼æŒ‰ç…§ yyyy-MM-dd æ ¼å¼å†™ã€‚
 
-ÀıÈç£º
+ä¾‹å¦‚ï¼š
 
 #pragma once
 
-// Ó²¼şÉè¼ÆÊ±¼ä£¬Ëø°åÉÏÒ»¶¨ÓĞ±ê¼Ç
-// ¸ñÊ½°´ÕÕ yyyy-MM-dd ¸ñÊ½Ğ´¡£
+// ç¡¬ä»¶è®¾è®¡æ—¶é—´ï¼Œé”æ¿ä¸Šä¸€å®šæœ‰æ ‡è®°
+// æ ¼å¼æŒ‰ç…§ yyyy-MM-dd æ ¼å¼å†™ã€‚
 #define HARDWARETIME "2021-05-22"
 h
 */
 
-// ¿ÉÒÔ¸øÍâ²¿Ê¹ÓÃ£¬´òÓ¡³öÀ´»­Í¼Ê±¼ä¡£
+// å¯ä»¥ç»™å¤–éƒ¨ä½¿ç”¨ï¼Œæ‰“å°å‡ºæ¥ç”»å›¾æ—¶é—´ã€‚
 extern const char* HardwareTime;
 
-// °æ±¾ºÅÊ¹ÓÃµçÂ·°åÊ±¼ä¼õÈ¥ 2000-1-1 00:00:00 µÃµ½µÄ·ÖÖÓÊı¡£
+// ç‰ˆæœ¬å·ä½¿ç”¨ç”µè·¯æ¿æ—¶é—´å‡å» 2000-1-1 00:00:00 å¾—åˆ°çš„åˆ†é’Ÿæ•°ã€‚
 uint GetHardwareVersion(void);
 
-/// <summary>»ñÈ¡Ó²¼ş°æ±¾</summary>
-/// <param name="addr">¹Ì¼şÆğÊ¼µØÖ·</param>
-/// <param name="len">¹Ì¼ş´óĞ¡</param>
+/// <summary>è·å–ç¡¬ä»¶ç‰ˆæœ¬</summary>
+/// <param name="addr">å›ºä»¶èµ·å§‹åœ°å€</param>
+/// <param name="len">å›ºä»¶å¤§å°</param>
 /// <returns></returns>
 uint GetHardwareVersion2(uint addr, int len);

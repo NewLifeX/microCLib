@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Flash.h"
 #include "BootLoadConfig.h"
@@ -7,33 +7,33 @@
 #include "HardwareInfo.h"
 
 
-/// <summary>Ğ´ÈëImageµ½´¢´æÇø</summary>
-/// <param name="offset">¹Ì¼şoffset</param>
+/// <summary>å†™å…¥Imageåˆ°å‚¨å­˜åŒº</summary>
+/// <param name="offset">å›ºä»¶offset</param>
 /// <param name="data"></param>
 /// <param name="len"></param>
-/// <returns>·µ»ØĞ´ÈëÊÇ·ñ³É¹¦</returns>
+/// <returns>è¿”å›å†™å…¥æ˜¯å¦æˆåŠŸ</returns>
 bool OtaImageSet(uint offset, byte* data, int len);
 
-/// <summary>Çå¿ÕImageÇøÓò</summary>
+/// <summary>æ¸…ç©ºImageåŒºåŸŸ</summary>
 /// <returns></returns>
 bool OtaImageClear(void);
 
-/// <summary>Ğ£ÑéCRC</summary>
+/// <summary>æ ¡éªŒCRC</summary>
 /// <param name="offset"></param>
 /// <param name="len"></param>
 /// <returns></returns>
 uint OtaImageCrc(uint offset, int len);
 
-/// <summary>Ğ£Ñé¹Ì¼şÊÇ·ñÕı³£</summary>
+/// <summary>æ ¡éªŒå›ºä»¶æ˜¯å¦æ­£å¸¸</summary>
 /// <param name="offset"></param>
 /// <param name="len"></param>
 /// <param name="crc2"></param>
 /// <returns></returns>
 bool OtaImageCrcCheck(uint offset, int len, uint crc2);
 
-/// <summary>¸üĞÂotaĞÅÏ¢£¬Æô¶¯Éı¼¶Ç°µÄ¶¯×÷</summary>
-/// <param name="size">ĞÂapp´óĞ¡</param>
-/// <param name="crc">ĞÂapp crc</param>
-/// <param name="version">°æ±¾£¬¿ÉÌî0</param>
+/// <summary>æ›´æ–°otaä¿¡æ¯ï¼Œå¯åŠ¨å‡çº§å‰çš„åŠ¨ä½œ</summary>
+/// <param name="size">æ–°appå¤§å°</param>
+/// <param name="crc">æ–°app crc</param>
+/// <param name="version">ç‰ˆæœ¬ï¼Œå¯å¡«0</param>
 /// <returns></returns>
 bool OtaUpdateImageInfo(int size, uint crc, uint version);

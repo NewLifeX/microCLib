@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 
@@ -16,14 +16,14 @@ typedef struct
 
 #pragma pack(pop)
 
-// Éı¼¶Âß¼­£º ½«bin±£´æµ½ÌØ¶¨Î»ÖÃ¡£
-// ²¢¸üĞÂ BootLoadConfig ÃèÊöĞÅÏ¢¡£È»ºóÖØÆô¡£
-// ÓÉ BootLoad ½« bin ·Åµ½ LoadAddr¡£²¢Òıµ¼Æô¶¯¡£
+// å‡çº§é€»è¾‘ï¼š å°†binä¿å­˜åˆ°ç‰¹å®šä½ç½®ã€‚
+// å¹¶æ›´æ–° BootLoadConfig æè¿°ä¿¡æ¯ã€‚ç„¶åé‡å¯ã€‚
+// ç”± BootLoad å°† bin æ”¾åˆ° LoadAddrã€‚å¹¶å¼•å¯¼å¯åŠ¨ã€‚
 
 
-// Éı¼¶¡£
-// bin µÄ³¤¶ÈÒÑ¾­ÔÚ info ÀïÃæÓĞ¡£
-// saveAddr  bin ±£´æµÄ Flash µØÖ·
-// Ò»°ãÊÇ Íê³ÉÖ®ºó£¬ĞŞ¸ÄÒ»Ğ©ÏµÍ³ÅäÖÃ£¬È»ºóÖØÆô¡£
+// å‡çº§ã€‚
+// bin çš„é•¿åº¦å·²ç»åœ¨ info é‡Œé¢æœ‰ã€‚
+// saveAddr  bin ä¿å­˜çš„ Flash åœ°å€
+// ä¸€èˆ¬æ˜¯ å®Œæˆä¹‹åï¼Œä¿®æ”¹ä¸€äº›ç³»ç»Ÿé…ç½®ï¼Œç„¶åé‡å¯ã€‚
 bool DoUpdate(UpdateBinInfo_t* info, uint saveAddr, byte* bin);
 

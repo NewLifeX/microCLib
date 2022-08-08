@@ -1,7 +1,7 @@
 
 #include "Base64.h"
 
-// 来源于阿里IOT代码  base64.c
+// 鏉ユ簮浜庨樋閲孖OT浠ｇ爜  base64.c
 
 static const unsigned char base64_enc_map[64] =
 {

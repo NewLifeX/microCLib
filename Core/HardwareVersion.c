@@ -1,4 +1,4 @@
-
+ï»¿
 #include "HardwareVersion.h"
 
 #include "Type.h"
@@ -9,15 +9,15 @@
 #include "stdio.h"
 
 
-// Ó²¼şÊ±¼ä
+// ç¡¬ä»¶æ—¶é—´
 const char* HardwareTime = "HardwareTime/" HARDWARETIME;
 
-// ·¢²¼Ê±¼äÊÇÍ¨¹ıÍâ²¿¹¤¾ßÖ±½ÓÌæ»»binÎÄ¼şÄÚµÄ yyyy-MM-dd HH:mm:ss ×Ö·û´®¡£
+// å‘å¸ƒæ—¶é—´æ˜¯é€šè¿‡å¤–éƒ¨å·¥å…·ç›´æ¥æ›¿æ¢binæ–‡ä»¶å†…çš„ yyyy-MM-dd HH:mm:ss å­—ç¬¦ä¸²ã€‚
 static bool GetTime(struct tm* time)
 {
 	sscanf(HardwareTime, "%*[^/]/%d-%d-%d", &time->tm_year, &time->tm_mon, &time->tm_mday);
 
-	// ´¦Àí struct tm È¡Öµ·¶Î§¡£
+	// å¤„ç† struct tm å–å€¼èŒƒå›´ã€‚
 	time->tm_year -= 1900;
 	time->tm_mon -= 1;
 
@@ -27,36 +27,36 @@ static bool GetTime(struct tm* time)
 	return true;
 }
 
-// »ñÈ¡°æ±¾
+// è·å–ç‰ˆæœ¬
 uint GetHardwareVersion(void)
 {
 	struct tm start =
 	{
-		.tm_year = 100,		// ÆäÖµµÈÓÚÊµ¼ÊÄê·İ¼õÈ¥1900
-		.tm_mon = 0,		// ÔÂ·İ£¨´ÓÒ»ÔÂ¿ªÊ¼£¬0´ú±íÒ»ÔÂ£© - È¡ÖµÇø¼äÎª[0,11]
-		.tm_mday = 1,		// Ò»¸öÔÂÖĞµÄÈÕÆÚ - È¡ÖµÇø¼äÎª[1,31] 
-		.tm_hour = 0,		// Ê± - È¡ÖµÇø¼äÎª[0,23]
-		.tm_min = 0,		// ·Ö - È¡ÖµÇø¼äÎª[0,59]
-		.tm_sec = 0,		// Ãë - È¡ÖµÇø¼äÎª[0,59]
+		.tm_year = 100,		// å…¶å€¼ç­‰äºå®é™…å¹´ä»½å‡å»1900
+		.tm_mon = 0,		// æœˆä»½ï¼ˆä»ä¸€æœˆå¼€å§‹ï¼Œ0ä»£è¡¨ä¸€æœˆï¼‰ - å–å€¼åŒºé—´ä¸º[0,11]
+		.tm_mday = 1,		// ä¸€ä¸ªæœˆä¸­çš„æ—¥æœŸ - å–å€¼åŒºé—´ä¸º[1,31] 
+		.tm_hour = 0,		// æ—¶ - å–å€¼åŒºé—´ä¸º[0,23]
+		.tm_min = 0,		// åˆ† - å–å€¼åŒºé—´ä¸º[0,59]
+		.tm_sec = 0,		// ç§’ - å–å€¼åŒºé—´ä¸º[0,59]
 	};
 
-	// ±àÒëÊ±¼ä¡£
+	// ç¼–è¯‘æ—¶é—´ã€‚
 	struct tm time;
 	memset(&time, 0, sizeof(time));
 
-	// ³¢ÊÔ»ñÈ¡·¢²¼°æ±¾Ê±¼ä´Á£¬Ê§°Ü»ñÈ¡±àÒëÊ±¼ä´Á
+	// å°è¯•è·å–å‘å¸ƒç‰ˆæœ¬æ—¶é—´æˆ³ï¼Œå¤±è´¥è·å–ç¼–è¯‘æ—¶é—´æˆ³
 	GetTime(&time);
 
-	// ¼ÆËãÃë²î/60=·ÖÖÓ²î¡£
+	// è®¡ç®—ç§’å·®/60=åˆ†é’Ÿå·®ã€‚
 	double min = difftime(mktime(&time), mktime(&start)) / 60.0;
 	uint minuint = (int)min;
 
 	return minuint;
 }
 
-/// <summary>»ñÈ¡Ó²¼ş°æ±¾,²Î¿¼ HardwareVersion.c</summary>
-/// <param name="addr">¹Ì¼şÆğÊ¼µØÖ·</param>
-/// <param name="len">¹Ì¼ş´óĞ¡</param>
+/// <summary>è·å–ç¡¬ä»¶ç‰ˆæœ¬,å‚è€ƒ HardwareVersion.c</summary>
+/// <param name="addr">å›ºä»¶èµ·å§‹åœ°å€</param>
+/// <param name="len">å›ºä»¶å¤§å°</param>
 /// <returns></returns>
 uint GetHardwareVersion2(uint addr, int len)
 {
@@ -68,7 +68,7 @@ uint GetHardwareVersion2(uint addr, int len)
 	char* p = (char*)(addr + idx);
 	if (strlen(p) == headlen)
 	{
-		// ÒòÎª±¾º¯ÊıµÄÎÊÌâ£¬×Ö·û´®»á¶àÒ»·İ¡£ĞèÒª¹ıÂË¡£
+		// å› ä¸ºæœ¬å‡½æ•°çš„é—®é¢˜ï¼Œå­—ç¬¦ä¸²ä¼šå¤šä¸€ä»½ã€‚éœ€è¦è¿‡æ»¤ã€‚
 		idx = ArrayIndexOf_Offset((byte*)addr, len, (byte*)head, headlen, idx + headlen);
 
 		if (idx == -1)return 0;
@@ -77,24 +77,24 @@ uint GetHardwareVersion2(uint addr, int len)
 
 	struct tm start =
 	{
-		.tm_year = 100,		// ÆäÖµµÈÓÚÊµ¼ÊÄê·İ¼õÈ¥1900
-		.tm_mon = 0,		// ÔÂ·İ£¨´ÓÒ»ÔÂ¿ªÊ¼£¬0´ú±íÒ»ÔÂ£© - È¡ÖµÇø¼äÎª[0,11]
-		.tm_mday = 1,		// Ò»¸öÔÂÖĞµÄÈÕÆÚ - È¡ÖµÇø¼äÎª[1,31] 
-		.tm_hour = 0,		// Ê± - È¡ÖµÇø¼äÎª[0,23]
-		.tm_min = 0,		// ·Ö - È¡ÖµÇø¼äÎª[0,59]
-		.tm_sec = 0,		// Ãë - È¡ÖµÇø¼äÎª[0,59]
+		.tm_year = 100,		// å…¶å€¼ç­‰äºå®é™…å¹´ä»½å‡å»1900
+		.tm_mon = 0,		// æœˆä»½ï¼ˆä»ä¸€æœˆå¼€å§‹ï¼Œ0ä»£è¡¨ä¸€æœˆï¼‰ - å–å€¼åŒºé—´ä¸º[0,11]
+		.tm_mday = 1,		// ä¸€ä¸ªæœˆä¸­çš„æ—¥æœŸ - å–å€¼åŒºé—´ä¸º[1,31] 
+		.tm_hour = 0,		// æ—¶ - å–å€¼åŒºé—´ä¸º[0,23]
+		.tm_min = 0,		// åˆ† - å–å€¼åŒºé—´ä¸º[0,59]
+		.tm_sec = 0,		// ç§’ - å–å€¼åŒºé—´ä¸º[0,59]
 	};
 
-	// ±àÒëÊ±¼ä¡£
+	// ç¼–è¯‘æ—¶é—´ã€‚
 	struct tm time;
 	memset(&time, 0, sizeof(time));
 	sscanf(p, "%*[^/]/%d-%d-%d", &time.tm_year, &time.tm_mon, &time.tm_mday);
 
-	// ´¦Àí struct tm È¡Öµ·¶Î§¡£
+	// å¤„ç† struct tm å–å€¼èŒƒå›´ã€‚
 	time.tm_year -= 1900;
 	time.tm_mon -= 1;
 
-	// ¼ÆËãÃë²î/60=·ÖÖÓ²î¡£
+	// è®¡ç®—ç§’å·®/60=åˆ†é’Ÿå·®ã€‚
 	double min = difftime(mktime(&time), mktime(&start)) / 60.0;
 	uint minuint = (int)min;
 
