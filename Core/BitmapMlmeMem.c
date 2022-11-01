@@ -1,6 +1,13 @@
 ﻿
 #include "BitmapMlmeMem.h"
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 // 初始化位图管理器
 // mem 需要管理的内存起始地址

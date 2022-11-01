@@ -2,7 +2,15 @@
 #include "OtaImageLoad.h"
 #include "BootLoadConfig.h"
 #include "Crc.h"
+
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 #ifndef OTACRCFUNC
 #define OTACRCFUNC CaclcCRC32B

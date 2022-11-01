@@ -5,7 +5,14 @@
 #include "Flash.h"
 #include "Crc.h"
 #include "Cpu.h"
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 // #define BOOTVERSION
 #ifdef BOOTVERSION

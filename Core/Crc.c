@@ -1,6 +1,13 @@
 ﻿#include "stdint.h"
 #include "Type.h"
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 #define CRC16_IBM
 

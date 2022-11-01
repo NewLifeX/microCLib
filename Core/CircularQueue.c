@@ -1,6 +1,13 @@
 ﻿
 #include "CircularQueue.h"
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 // #include "Array.h"
 
 #ifndef __INLINE

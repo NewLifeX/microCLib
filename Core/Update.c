@@ -1,13 +1,19 @@
 ﻿
 #include "Update.h"
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 #include "Flash.h"
 #include "Cpu.h"
 
 #include "Crc.h"
 #include "BootLoadConfig.h"
-
 
 bool DoUpdate(UpdateBinInfo_t* info, uint saveAddr, byte* bin)
 {

@@ -1,6 +1,5 @@
 ﻿#include "SHA1.h"
 
-
 uint swapInt32(uint value)
 {
     return	((value & 0x000000FF) << 24) |
@@ -11,7 +10,6 @@ uint swapInt32(uint value)
 
 #define htobe32(x) swapInt32(x)
 #define be32toh(x) swapInt32(x)
-
 
 #define SHA1_KEY_IOPAD_SIZE (64)
 #define SHA1_DIGEST_SIZE    (20)

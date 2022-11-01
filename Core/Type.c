@@ -12,6 +12,10 @@ __attribute__((weak)) MallocFunc	 GlobleMalloc = malloc;
 __attribute__((weak)) FreeFunc    GlobleFree = free;
 #endif
 
+#if  !(defined ( __CC_ARM ) || defined ( __GNUC__ ))
+#error "need define weak GlobleMalloc GlobleFree"
+#endif
+
 __inline void InitBuffer(Buffer_t* data)	{ memset(data, 0x00, sizeof(Buffer_t));	data->free = GlobleFree;}
 __inline void InitBuffer2(Buffer2_t* data)	{ memset(data, 0x00, sizeof(Buffer2_t));data->free = GlobleFree;}
 

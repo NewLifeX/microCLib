@@ -1,6 +1,13 @@
 ﻿
 #include "BackMemory.h"
+#ifdef DEBUG
 #include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 /*
 // 从map文件抠出来的，MDK设置页面设置的IRAM1 start地址值。

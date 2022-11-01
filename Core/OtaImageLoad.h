@@ -2,10 +2,7 @@
 
 #include "Flash.h"
 #include "BootLoadConfig.h"
-
-
 #include "HardwareInfo.h"
-
 
 /// <summary>写入Image到储存区</summary>
 /// <param name="offset">固件offset</param>

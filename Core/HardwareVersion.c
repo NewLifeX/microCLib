@@ -2,12 +2,19 @@
 #include "HardwareVersion.h"
 
 #include "Type.h"
-#include "Debug.h"
 #include "Array.h"
 
 #include "time.h"
 #include "stdio.h"
 
+#ifdef DEBUG
+#include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 // 硬件时间
 const char* HardwareTime = "HardwareTime/" HARDWARETIME;

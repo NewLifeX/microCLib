@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Type.h"
-
 #include <stddef.h>
 #include <stdint.h>
 

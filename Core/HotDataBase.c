@@ -1,6 +1,13 @@
 ﻿
 #include "HotDataBase.h"
-// #include "Debug.h"
+#ifdef DEBUG
+#include "Debug.h"
+#else
+#define ErrPrintf( ... )
+#define WarningPrintf( ... )
+#define DebugPrintf( ... )
+#define TraceThis( ... )
+#endif
 
 // "HotD"
 const uint Magic = 0x486f7444;
