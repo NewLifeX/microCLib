@@ -11,6 +11,8 @@
 
 // "HotD"
 const uint Magic = 0x486f7444;
+// 按照后备寄存器的 2 字节对齐计算长度。
+#define HotLen  ((sizeof(Magic) + sizeof(HotData_t) + sizeof(byte) + 1) & 0xfffffffe)
 
 static byte CalcCrcXX(byte* data, int len)
 {
@@ -19,27 +21,58 @@ static byte CalcCrcXX(byte* data, int len)
 	return crc;
 }
 
+static bool ReadHot(int offset, HotData_t* hot)
+{
+	byte temp[HotLen];
+	BackupRead(offset, temp, sizeof(temp));
+
+	uint magic = *(uint*)&temp[0];
+	if (magic != Magic)return false;
+
+	byte crc = temp[sizeof(magic) + sizeof(HotData_t)];
+	if (crc != CalcCrcXX(&temp[sizeof(magic)], sizeof(HotData_t)))return false;
+
+	memcpy(hot, temp + sizeof(magic), sizeof(HotData_t));
+	return true;
+}
+
 // 获取
 bool GetHotData(HotData_t* hot)
 {
-	uint magic;
-	BackupRead(0, (byte*)&magic, sizeof(magic));
-	if (magic != Magic)return false;
-
-	byte crc;
-	BackupRead(sizeof(Magic), (byte*)hot, sizeof(HotData_t));
-	BackupRead(sizeof(Magic) + sizeof(HotData_t), (byte*)&crc, sizeof(crc));
-	if (crc != CalcCrcXX((byte*)hot, sizeof(HotData_t)))return false;
-	return true;
+	if (ReadHot(0, hot))return true;
+	if (ReadHot(HotLen, hot))return true;
+	return false;
 }
+
+/*
+static bool WriteHot(int offset, HotData_t* hot)
+{
+	byte crc = CalcCrcXX(hot, sizeof(HotData_t));
+	byte temp[HotLen];
+
+	memcpy(temp, (byte*)&Magic, sizeof(Magic));
+	memcpy(temp + sizeof(Magic), hot, sizeof(HotData_t));
+	memcpy(temp + sizeof(Magic) + sizeof(HotData_t), &crc, sizeof(crc));
+
+	return BackupWrite(offset, temp, sizeof(temp));
+}
+*/
 
 // 保存
 bool SaveHotData(HotData_t* hot)
 {
-	BackupWrite(0, (byte*)&Magic, sizeof(Magic));
 	byte crc = CalcCrcXX((byte*)hot, sizeof(HotData_t));
-	BackupWrite(sizeof(Magic), (byte*)hot, sizeof(HotData_t));
-	return  BackupWrite(sizeof(Magic) + sizeof(HotData_t), (byte*)&crc, sizeof(crc));
+	byte temp[HotLen];
+
+	memcpy(temp, (byte*)&Magic, sizeof(Magic));
+	memcpy(temp + sizeof(Magic), hot, sizeof(HotData_t));
+	memcpy(temp + sizeof(Magic) + sizeof(HotData_t), &crc, sizeof(crc));
+
+	// 写两遍，只判断第一次结果。
+	bool rs = BackupWrite(0, temp, sizeof(temp));
+	BackupWrite(HotLen, temp, sizeof(temp));
+
+	return rs;
 }
 
 // 删除
