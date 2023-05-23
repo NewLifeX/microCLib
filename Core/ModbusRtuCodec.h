@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 #include "Stream.h"
@@ -6,9 +6,9 @@
 
 /*
 
-// modbus ÇëÇó°ü¸ñÊ½
+// modbus è¯·æ±‚åŒ…æ ¼å¼
 
-// ÇëÇó°ü
+// è¯·æ±‚åŒ…
 // 01   addr+cmd+2regaddr+2bitcnt+2crc
 // 02   addr+cmd+2regaddr+2bitcnt+2crc
 // 03   addr+cmd+2regaddr+2regcnt+2crc
@@ -17,55 +17,55 @@
 // 06   addr+cmd+2regaddr+2data+2crc
 // 10	addr+cmd+2regaddr+2regcnt+bytelen+ (bytelen*data) +2crc
 
-// »Ø¸´°ü
+// å›å¤åŒ…
 // 01	addr+cmd+bitcnt+ N * bits +2crc
 // 02	addr+cmd+bitcnt+ N * bits +2crc
 // 03	addr+cmd+bytelen+ (bytelen*data) +2crc
 // 04	addr+cmd+bytelen+ (bytelen*data) +2crc
-// 05   06   µÈÓÚÇëÇó°ü
+// 05   06   ç­‰äºè¯·æ±‚åŒ…
 // 10	addr+cmd+2regaddr+2regcnt+2crc
 
-½âÊÍ£º
-// addr Õ¾ºÅ
-// cmd ¹¦ÄÜÂë
-// regaddr ¼Ä´æÆ÷µØÖ·
-// regcnt  ¼Ä´æÆ÷¸öÊı
-// bitcnt  bitÎ»Êı
-// bytelen ×Ö½ÚÊı
-// data    Êı¾İ
-// crc	   Ğ£ÑéÂë
+è§£é‡Šï¼š
+// addr ç«™å·
+// cmd åŠŸèƒ½ç 
+// regaddr å¯„å­˜å™¨åœ°å€
+// regcnt  å¯„å­˜å™¨ä¸ªæ•°
+// bitcnt  bitä½æ•°
+// bytelen å­—èŠ‚æ•°
+// data    æ•°æ®
+// crc	   æ ¡éªŒç 
 
 */
 
-// »ñÈ¡ÓĞĞ§µÄmodbus rtuÊı¾İ°ü³¤¶È£¨»áĞ£ÑéÊı¾İ°ü£©
-// ´Ó»ú»ñÈ¡Êı¾İ°ü³¤¶È
-// 0 Ã»ÓĞ×ã¹»³¤¶ÈµÄÊı¾İ¡£
-// -1 Êı¾İ°üĞ£Ñé³ö´í
-// -2 Êı¾İ³¤¶È²»¶Ô£¬modbus rtu Êı¾İ°üĞ¡ÓÚ 130 ×Ö½Ú¡£
+// è·å–æœ‰æ•ˆçš„modbus rtuæ•°æ®åŒ…é•¿åº¦ï¼ˆä¼šæ ¡éªŒæ•°æ®åŒ…ï¼‰
+// ä»æœºè·å–æ•°æ®åŒ…é•¿åº¦
+// 0 æ²¡æœ‰è¶³å¤Ÿé•¿åº¦çš„æ•°æ®ã€‚
+// -1 æ•°æ®åŒ…æ ¡éªŒå‡ºé”™
+// -2 æ•°æ®é•¿åº¦ä¸å¯¹ï¼Œmodbus rtu æ•°æ®åŒ…å°äº 130 å­—èŠ‚ã€‚
 int MrcSlaveGetLength(byte* data, int len);
 int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue);
 int MrcSlaveGetLenStream(Stream_t* st);
 
-// 01 02 ÇëÇóÖ¸Áî¡£ len = 8
+// 01 02 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 8
 int Mrc01a02(byte addr, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len);
-// 01 02 Ö¸Áî»Ø¸´¡£ len > (bitlen+7)/8 + 5;
-// bits Î´×ö´óĞ¡¶Ë´¦Àí
+// 01 02 æŒ‡ä»¤å›å¤ã€‚ len > (bitlen+7)/8 + 5;
+// bits æœªåšå¤§å°ç«¯å¤„ç†
 int MrcResult01a02(byte addr,byte cmd, byte* bits, ushort bitlen, byte* data, int len);
 
-// 03 04 ÇëÇóÖ¸Áî¡£ len = 8
+// 03 04 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 8
 int Mrc03a04(byte addr, byte cmd, ushort regaddr, ushort regcnt, byte* data, int len);
-// 03 Ö¸Áî»Ø¸´¡£ len > regcnt * 2 + 5
-// reg Î´×ö´óĞ¡¶Ë´¦Àí
+// 03 æŒ‡ä»¤å›å¤ã€‚ len > regcnt * 2 + 5
+// reg æœªåšå¤§å°ç«¯å¤„ç†
 int MrcResult03a04(byte addr,byte cmd, byte* reg, ushort regcnt, byte* data, int len);
 
-// 05 06 ÇëÇóÖ¸Áî  len = 8
-// 05 Ö¸ÁîÓĞĞ§Êı¾İ£º ff00 ºÏ  0000 ·Ö
-// 05¡¢ 06 Ô­Ñù»Ø¸´Êı¾İ¡£²»ÓÃ·â×°¡£
+// 05 06 è¯·æ±‚æŒ‡ä»¤  len = 8
+// 05 æŒ‡ä»¤æœ‰æ•ˆæ•°æ®ï¼š ff00 åˆ  0000 åˆ†
+// 05ã€ 06 åŸæ ·å›å¤æ•°æ®ã€‚ä¸ç”¨å°è£…ã€‚
 int Mrc05a06(byte addr, byte cmd, ushort regaddr, ushort reg, byte* data, int len);
 
-// 10 ÇëÇóÖ¸Áî£¬ len > regcnt*2 + 9
-// regdata Î´×ö´óĞ¡¶Ë´¦Àí
+// 10 è¯·æ±‚æŒ‡ä»¤ï¼Œ len > regcnt*2 + 9
+// regdata æœªåšå¤§å°ç«¯å¤„ç†
 int Mrc10(byte addr, ushort regaddr, byte* regdata, ushort regcnt, byte* data, int len);
-// 10 Ö¸Áî»Ø¸´  len = 8
+// 10 æŒ‡ä»¤å›å¤  len = 8
 int MrcResult10(byte addr, ushort regaddr, ushort regcnt, byte* data, int len);
 

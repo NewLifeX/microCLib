@@ -1,4 +1,4 @@
-
+ï»¿
 #include "ModbusRtuCodec.h"
 #include "Crc.h"
 
@@ -20,14 +20,14 @@ int MrcSlaveGetLength(byte* p, int len)
 	byte cmd = p[1];
 	switch (cmd)
 	{
-		// ¶ÁÖ¸Áî³¤¶È¶¼ÊÇ 8 ×Ö½Ú¡£
-		// Ğ´µ¥¸ö¼Ä´æÆ÷³¤¶ÈÒ²ÊÇ 8×Ö½Ú¡£
-	case 1: // ¶ÁÏßÈ¦   
-	case 2:	// ¶ÁÀëÉ¢ÊäÈë  
-	case 3: // ¶Á¶à¸ö±£³Ö¼Ä´æÆ÷ 
-	case 4: // ¶ÁÊäÈë¼Ä´æÆ÷ 
-	case 5: // ¶Áµ¥¸ö¼Ä´æÆ÷ 
-	case 6: // Ğ´¼Ä´æÆ÷ 
+		// è¯»æŒ‡ä»¤é•¿åº¦éƒ½æ˜¯ 8 å­—èŠ‚ã€‚
+		// å†™å•ä¸ªå¯„å­˜å™¨é•¿åº¦ä¹Ÿæ˜¯ 8å­—èŠ‚ã€‚
+	case 1: // è¯»çº¿åœˆ   
+	case 2:	// è¯»ç¦»æ•£è¾“å…¥  
+	case 3: // è¯»å¤šä¸ªä¿æŒå¯„å­˜å™¨ 
+	case 4: // è¯»è¾“å…¥å¯„å­˜å™¨ 
+	case 5: // è¯»å•ä¸ªå¯„å­˜å™¨ 
+	case 6: // å†™å¯„å­˜å™¨ 
 	{
 		if (Check(p, 8))return 8;
 		return -1;
@@ -43,7 +43,7 @@ int MrcSlaveGetLength(byte* p, int len)
 		if (len == 0)return -2;
 		if (bytelen > 122)return -2;
 		if (len < bytelen)return 0;
-		// ¹Ì¶¨³¤¶ÈÊÇ 9 ×Ö½Ú
+		// å›ºå®šé•¿åº¦æ˜¯ 9 å­—èŠ‚
 		ushort pglen = bytelen + 9;
 		if (Check(p, pglen))return pglen;
 		return -1;
@@ -59,20 +59,20 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 	int remian = CircularQueueRemain(queue);
 	if (remian < 8)return 0;
 
-	// ÄÃµ½ cmd
+	// æ‹¿åˆ° cmd
 	byte cache[8];
 	CircularQueueReads(queue, cache, sizeof(cache), true);
 	byte cmd = cache[1];
 
 	switch (cmd)
 	{
-		// ¶ÁÖ¸Áî³¤¶È¶¼ÊÇ 8 ×Ö½Ú¡£
-		// Ğ´µ¥¸ö¼Ä´æÆ÷³¤¶ÈÒ²ÊÇ 8×Ö½Ú¡£
-	case 1: // ¶ÁÏßÈ¦   1bit
-	case 2:	// ¶ÁÀëÉ¢ÊäÈë  1bit
-	case 3: // ¶Á±£³Ö¼Ä´æÆ÷ 16bit
-	case 4: // ¶ÁÊäÈë¼Ä´æÆ÷ 16bit
-	case 6: // Ğ´¼Ä´æÆ÷  16bit
+		// è¯»æŒ‡ä»¤é•¿åº¦éƒ½æ˜¯ 8 å­—èŠ‚ã€‚
+		// å†™å•ä¸ªå¯„å­˜å™¨é•¿åº¦ä¹Ÿæ˜¯ 8å­—èŠ‚ã€‚
+	case 1: // è¯»çº¿åœˆ   1bit
+	case 2:	// è¯»ç¦»æ•£è¾“å…¥  1bit
+	case 3: // è¯»ä¿æŒå¯„å­˜å™¨ 16bit
+	case 4: // è¯»è¾“å…¥å¯„å­˜å™¨ 16bit
+	case 6: // å†™å¯„å­˜å™¨  16bit
 	{
 		if (Check(cache, 8))return 8;
 		return -1;
@@ -81,11 +81,11 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 	case 0x10:
 	{
 		/*
-		// ÒòÎª CircularQueue_t ÊÇ¶ÁĞ´·ÖÀëµÄ£¬ËùÒÔ·ÀÖ¹±»ĞŞ¸Ä£¬ĞèÒªcopy³öÀ´¡£
+		// å› ä¸º CircularQueue_t æ˜¯è¯»å†™åˆ†ç¦»çš„ï¼Œæ‰€ä»¥é˜²æ­¢è¢«ä¿®æ”¹ï¼Œéœ€è¦copyå‡ºæ¥ã€‚
 		CircularQueue_t queue2;
 		CircularQueue_t* q = &queue2;
 		memcpy(q, queue, sizeof(CircularQueue_t));
-		// ĞèÒª·´¸´²Ù×÷£¬±£Áô tail Ö¸ÕëÎ»ÖÃ¡£
+		// éœ€è¦åå¤æ“ä½œï¼Œä¿ç•™ tail æŒ‡é’ˆä½ç½®ã€‚
 		byte* tail = q->pTail;
 		*/
 
@@ -99,7 +99,7 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 		if (remian < len)return 0;
 
 		ushort pglen = len + 9;
-		// 10 Êı¾İ°ü²»»á´óÓÚ 130 ×Ö½Ú¡£
+		// 10 æ•°æ®åŒ…ä¸ä¼šå¤§äº 130 å­—èŠ‚ã€‚
 		byte pgcache[130];
 		CircularQueueReads(queue, pgcache, pglen, true);
 
@@ -119,7 +119,7 @@ int MrcSlaveGetLenStream(Stream_t* st)
 	return MrcSlaveGetLength(p, remain);
 }
 
-// 01 02 ÇëÇóÖ¸Áî¡£ len = 8
+// 01 02 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 8
 int Mrc01a02(byte addr, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len)
 {
 	if (data == NULL)return -1;
@@ -142,7 +142,7 @@ int Mrc01a02(byte addr, byte cmd, ushort regaddr, ushort bitlen, byte* data, int
 	return st.Position;
 }
 
-// 01 02 Ö¸ÁîµÄ»Ø¸´¡£ len > (bitlen+7)/8 + 5;
+// 01 02 æŒ‡ä»¤çš„å›å¤ã€‚ len > (bitlen+7)/8 + 5;
 int MrcResult01a02(byte addr, byte cmd, byte* bits, ushort bitlen, byte* data, int len)
 {
 	if (cmd < 1)return -1;
@@ -167,13 +167,13 @@ int MrcResult01a02(byte addr, byte cmd, byte* bits, ushort bitlen, byte* data, i
 	return st.Position;
 }
 
-// 03 04 ÇëÇóÖ¸Áî¡£ len = 8
+// 03 04 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 8
 int Mrc03a04(byte addr, byte cmd, ushort regaddr, ushort regcnt, byte* data, int len)
 {
 	return Mrc01a02(addr, cmd, regaddr, regcnt, data, len);
 }
 
-// 03 Ö¸Áî»Ø¸´¡£ len > regcnt * 2 + 5
+// 03 æŒ‡ä»¤å›å¤ã€‚ len > regcnt * 2 + 5
 int MrcResult03a04(byte addr, byte cmd, byte* reg, ushort regcnt, byte* data, int len)
 {
 	if (data == NULL)return -1;
@@ -194,7 +194,7 @@ int MrcResult03a04(byte addr, byte cmd, byte* reg, ushort regcnt, byte* data, in
 	return st.Position;
 }
 
-// 05 06 ÇëÇóÖ¸Áî  len = 8
+// 05 06 è¯·æ±‚æŒ‡ä»¤  len = 8
 int Mrc05a06(byte addr, byte cmd, ushort regaddr, ushort reg, byte* data, int len)
 {
 	if (data == NULL)return -1;
@@ -241,7 +241,7 @@ int Mrc10(byte addr, ushort regaddr, byte* regdata, ushort regcnt, byte* data, i
 	return st.Position;
 }
 
-// 10 Ö¸Áî»Ø¸´
+// 10 æŒ‡ä»¤å›å¤
 int MrcResult10(byte addr, ushort regaddr, ushort regcnt, byte* data, int len)
 {
 	if (data == NULL)return -1;

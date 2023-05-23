@@ -1,30 +1,30 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 
-// ËùÓĞ±äÁ¿²»¿ÉÖ±½ÓĞŞ¸Ä£¬±ÜÃâ³öÎÊÌâ¡£
+// æ‰€æœ‰å˜é‡ä¸å¯ç›´æ¥ä¿®æ”¹ï¼Œé¿å…å‡ºé—®é¢˜ã€‚
 typedef struct
 {
-	// ³¤¶È×Ö¶ÎËùÔÚÎ»ÖÃ
+	// é•¿åº¦å­—æ®µæ‰€åœ¨ä½ç½®
 	short offset;
-	// ³¤¶È×Ö¶ÎµÄ³¤¶È£¬1/2/4/-2/-4  ¸ºÊıÎª´ó¶Ë¡£
+	// é•¿åº¦å­—æ®µçš„é•¿åº¦ï¼Œ1/2/4/-2/-4  è´Ÿæ•°ä¸ºå¤§ç«¯ã€‚
 	short size;
 
-	// ÓÃÓÚ½âÎöÓÃµÄÊı¾İ»º³åÇø
+	// ç”¨äºè§£æç”¨çš„æ•°æ®ç¼“å†²åŒº
 	// byte* cache;
-	// cache ³¤¶È
+	// cache é•¿åº¦
 	int cachelen;
 }LengthFieldCodec_t;
 
-// ³õÊ¼»¯ LengthFieldCodec_t ±äÁ¿
+// åˆå§‹åŒ– LengthFieldCodec_t å˜é‡
 void LfcInit(LengthFieldCodec_t* lfc, short offset, short size);
 
-// ´ÓÊı×é¶Á³¤¶È£¬·µ»Ø³¤¶È£¬Ğ¡ÓÚ1Ê§°Ü¡£Ö§³Ö 7 Î»Ñ¹Ëõ±àÂë
+// ä»æ•°ç»„è¯»é•¿åº¦ï¼Œè¿”å›é•¿åº¦ï¼Œå°äº1å¤±è´¥ã€‚æ”¯æŒ 7 ä½å‹ç¼©ç¼–ç 
 int LfcGetLength(LengthFieldCodec_t* lfc, byte* data, int dlen);
 
-// Ğ´³¤¶È×Ö¶Î
-// ·µ»ØĞ´ÈëµÄ×Ö½ÚÊı£¬Ğ¡ÓÚ1Ê§°Ü¡£²»Ö§³Ö 7 Î»Ñ¹Ëõ±àÂë
-// ¿ÉÒÔÊ¹ÓÃ Stream À´´¦Àí 7Î»Ñ¹Ëõ±àÂëÎÊÌâ¡£¼ûÎÄ¼şÄ©Î²¡£
+// å†™é•¿åº¦å­—æ®µ
+// è¿”å›å†™å…¥çš„å­—èŠ‚æ•°ï¼Œå°äº1å¤±è´¥ã€‚ä¸æ”¯æŒ 7 ä½å‹ç¼©ç¼–ç 
+// å¯ä»¥ä½¿ç”¨ Stream æ¥å¤„ç† 7ä½å‹ç¼©ç¼–ç é—®é¢˜ã€‚è§æ–‡ä»¶æœ«å°¾ã€‚
 int LfcSetLength(LengthFieldCodec_t* lfc, byte* data, int dlen, int length);
 
 
@@ -32,32 +32,32 @@ int LfcSetLength(LengthFieldCodec_t* lfc, byte* data, int dlen, int length);
 #include "Stream.h"
 
 
-// ´Ó»·ĞÎ¶ÓÁĞ¶ÁÏûÏ¢³¤¶È, Ö§³Ö 7 Î»Ñ¹Ëõ±àÂë
+// ä»ç¯å½¢é˜Ÿåˆ—è¯»æ¶ˆæ¯é•¿åº¦, æ”¯æŒ 7 ä½å‹ç¼©ç¼–ç 
 int LfcGetLenCircularQueue(LengthFieldCodec_t* lfc, CircularQueue_t* queue);
 
-// ´ÓÁ÷»ñÈ¡ÏûÏ¢³¤¶È, Ö§³Ö 7 Î»Ñ¹Ëõ±àÂë
+// ä»æµè·å–æ¶ˆæ¯é•¿åº¦, æ”¯æŒ 7 ä½å‹ç¼©ç¼–ç 
 int LfcGetLenStream(LengthFieldCodec_t* lfc, Stream_t* st);
 
 
 /*
-	// Ğ´ 7Î»Ñ¹Ëõ±àÂëÎÊÌâ·½°¸¡£
+	// å†™ 7ä½å‹ç¼©ç¼–ç é—®é¢˜æ–¹æ¡ˆã€‚
 	byte cache[32];
 	int len = sizeof(cache);
 
-	// Ğ´ length Ç°ÃæµÄÊı¾İ
+	// å†™ length å‰é¢çš„æ•°æ®
 	Stream_t head;
 	StreamInit(&head, data, len);
 	StreamWriteByte(&head, xxxx);
 
-	// Í·²¿ºóÃæÊı¾İ£¬Ô¤Áô5¸ö×Ö½ÚµÄ³¤¶È
+	// å¤´éƒ¨åé¢æ•°æ®ï¼Œé¢„ç•™5ä¸ªå­—èŠ‚çš„é•¿åº¦
 	Stream_t tail;
 	StreamInit(&tail,  cache + st.Position + 5 , len - st.Position - 5 );
 	StreamWriteByte(&tail, xxxx);
 
-	// »Ø¹ıÍ·À´Ìî³ä³¤¶ÈĞÅÏ¢¡£
+	// å›è¿‡å¤´æ¥å¡«å……é•¿åº¦ä¿¡æ¯ã€‚
 	StreamWriteCompressionUint(&head,tail.Position);
 
-	// Å²ºóÃæµÄÊı¾İ
+	// æŒªåé¢çš„æ•°æ®
 	StreamWriteBytes(&head,tail.MemStart,tail.Position);
 
 */

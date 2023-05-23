@@ -1,4 +1,4 @@
-
+ï»¿
 #include "Type.h"
 #include "ModbusTcpCodec.h"
 #include "LengthFieldCodec.h"
@@ -32,7 +32,7 @@ int MtcGetLenStream(Stream_t* st)
 	return res;
 }
 
-// 01 02 ÇëÇóÖ¸Áî¡£ len = 12
+// 01 02 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 12
 int Mtc01a02(MtcHead_t* head, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len)
 {
 	if (data == NULL)return -1;
@@ -53,7 +53,7 @@ int Mtc01a02(MtcHead_t* head, byte cmd, ushort regaddr, ushort bitlen, byte* dat
 	return st.Position;
 }
 
-// 01 02 Ö¸ÁîµÄ»Ø¸´¡£ len > (bitlen+7)/8 + 9;
+// 01 02 æŒ‡ä»¤çš„å›å¤ã€‚ len > (bitlen+7)/8 + 9;
 int MtcResult01a02(MtcHead_t* head, byte cmd, byte* bits, ushort bitlen, byte* data, int len)
 {
 	if (cmd < 1)return -1;
@@ -77,13 +77,13 @@ int MtcResult01a02(MtcHead_t* head, byte cmd, byte* bits, ushort bitlen, byte* d
 	return st.Position;
 }
 
-// 03 04 ÇëÇóÖ¸Áî¡£ len = 12
+// 03 04 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 12
 int Mtc03a04(MtcHead_t* head, byte cmd, ushort regaddr, ushort regcnt, byte* data, int len)
 {
 	return Mtc01a02(head, cmd, regaddr, regcnt, data, len);
 }
 
-// 03 Ö¸Áî»Ø¸´¡£ len > regcnt * 2 + 9
+// 03 æŒ‡ä»¤å›å¤ã€‚ len > regcnt * 2 + 9
 int MtcResult03a04(MtcHead_t* head, byte cmd, byte* reg, ushort regcnt, byte* data, int len)
 {
 	if (data == NULL)return -1;
@@ -102,7 +102,7 @@ int MtcResult03a04(MtcHead_t* head, byte cmd, byte* reg, ushort regcnt, byte* da
 	return st.Position;
 }
 
-// 05 06 ÇëÇóÖ¸Áî  len = 12
+// 05 06 è¯·æ±‚æŒ‡ä»¤  len = 12
 int Mtc05a06(MtcHead_t* head, byte cmd, ushort regaddr, ushort reg, byte* data, int len)
 {
 	if (data == NULL)return -1;
@@ -145,7 +145,7 @@ int Mtc10(MtcHead_t* head, ushort regaddr, byte* regdata, ushort regcnt, byte* d
 	return st.Position;
 }
 
-// 10 Ö¸Áî»Ø¸´
+// 10 æŒ‡ä»¤å›å¤
 int MtcResult10(MtcHead_t* head, ushort regaddr, ushort regcnt, byte* data, int len)
 {
 	if (data == NULL)return -1;

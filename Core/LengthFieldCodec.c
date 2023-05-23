@@ -1,4 +1,4 @@
-
+ï»¿
 #include "LengthFieldCodec.h"
 #include "CircularQueue.h"
 #include "Stream.h"
@@ -48,7 +48,7 @@ static int normalRead(byte* p, int size)
 	return -3;
 }
 
-// ·µ»ØĞ´ÈëµÄ×Ö½ÚÊı
+// è¿”å›å†™å…¥çš„å­—èŠ‚æ•°
 static int normalWrite(byte* p, uint len, int size)
 {
 	switch (size)
@@ -105,25 +105,25 @@ int LfcGetLength(LengthFieldCodec_t* lfc, byte* data, int dlen)
 		int len = 0;
 		for (int i = 0; i < 5; i++)
 		{
-			// Êı¾İ²»¹»³¤£¬Ê§°Ü
+			// æ•°æ®ä¸å¤Ÿé•¿ï¼Œå¤±è´¥
 			if (dlen - i < 1)return -3;
 
 			byte temp = p[i];
-			// ´¦ÀíÊı¾İ
+			// å¤„ç†æ•°æ®
 			int v7 = temp & 0x7f;
 			len += (v7 << (7 * i));
-			// ÅĞ¶ÏÊÇ²»ÊÇ½áÎ²¡£
+			// åˆ¤æ–­æ˜¯ä¸æ˜¯ç»“å°¾ã€‚
 			if ((temp & 0x80) == 0) return len;
 		}
 
-		// 5¸ö×Ö½ÚÃ»ÓĞÕÒµ½½áÎ²£¬±¨´í¡£Êı¾İ´óÓÚ int ·¶Î§ÁË¡£
+		// 5ä¸ªå­—èŠ‚æ²¡æœ‰æ‰¾åˆ°ç»“å°¾ï¼ŒæŠ¥é”™ã€‚æ•°æ®å¤§äº int èŒƒå›´äº†ã€‚
 		return -4;
 	}
 
 	return normalRead(p, lfc->size);
 }
 
-// ·µ»ØĞ´ÈëµÄ×Ö½ÚÊı£¬Ğ¡ÓÚ0Ê§°Ü¡£
+// è¿”å›å†™å…¥çš„å­—èŠ‚æ•°ï¼Œå°äº0å¤±è´¥ã€‚
 int LfcSetLength(LengthFieldCodec_t* lfc, byte* data, int dlen, int length)
 {
 	if (data == NULL)return -1;
@@ -133,8 +133,8 @@ int LfcSetLength(LengthFieldCodec_t* lfc, byte* data, int dlen, int length)
 	return -4;
 }
 
-// 7 Î»Ñ¹Ëõ±àÂëÊ±ºòµÄÊıÖµÕ¼ÓÃ×Ö½ÚÊı¡£
-// Ç¶ÈëÊ½»ù±¾²»»áÅöµ½ 4g ÒÔÉÏµÄ·¶Î§¡£ Ö±½Ó²»¿¼ÂÇ 64bit¡£ 
+// 7 ä½å‹ç¼©ç¼–ç æ—¶å€™çš„æ•°å€¼å ç”¨å­—èŠ‚æ•°ã€‚
+// åµŒå…¥å¼åŸºæœ¬ä¸ä¼šç¢°åˆ° 4g ä»¥ä¸Šçš„èŒƒå›´ã€‚ ç›´æ¥ä¸è€ƒè™‘ 64bitã€‚ 
 static int CompressionUintSize(int num)
 {
 	for (int i = 1; i < 5; i++)
@@ -156,7 +156,7 @@ int LfcGetLenCircularQueue(LengthFieldCodec_t* lfc, CircularQueue_t* queue)
 
 	if (lfc->size != 0)
 	{
-		// copy ³öÀ´£¬¶ÁÊÇ²»Ó°ÏìÔ­ queue µÄ
+		// copy å‡ºæ¥ï¼Œè¯»æ˜¯ä¸å½±å“åŸ queue çš„
 		CircularQueue_t q2;
 		memcpy(&q2, queue, sizeof(q2));
 		CircularQueueSeek(&q2, lfc->offset);
@@ -169,16 +169,16 @@ int LfcGetLenCircularQueue(LengthFieldCodec_t* lfc, CircularQueue_t* queue)
 	}
 	else
 	{
-		// copy ³öÀ´£¬¶ÁÊÇ²»Ó°ÏìÔ­ queue µÄ
+		// copy å‡ºæ¥ï¼Œè¯»æ˜¯ä¸å½±å“åŸ queue çš„
 		CircularQueue_t q2;
 		memcpy(&q2, queue, sizeof(q2));
 		CircularQueueSeek(&q2, lfc->offset);
 
-		// Ö±½ÓÊ¹ÓÃ queue Ìá¹©µÄ°ì·¨
+		// ç›´æ¥ä½¿ç”¨ queue æä¾›çš„åŠæ³•
 		uint len = 0xffffffff;
 		CircularQueueReadCompressionUint(&q2, &len);
 
-		// ¶ÁÊ§°ÜÅĞ¶Ï¡£
+		// è¯»å¤±è´¥åˆ¤æ–­ã€‚
 		if (len == 0xffffffff)return -4;
 		return len;
 	}
@@ -195,14 +195,14 @@ int LfcGetLenStream(LengthFieldCodec_t* lfc, Stream_t* st)
 	}
 	else
 	{
-		// Ö±½ÓÓÃ stream µÄ¶Á·¨¡£
+		// ç›´æ¥ç”¨ stream çš„è¯»æ³•ã€‚
 		int posi = st->Position;
 
 		StreamSeek(st, lfc->offset, SeekCurrent);
 		uint len = 0;
 		if (StreamReadCompressionUint(st, &len) < 1)len = -5;
 
-		// »Ö¸´ posi
+		// æ¢å¤ posi
 		st->Position = posi;
 
 		return len;

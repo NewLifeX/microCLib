@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Type.h"
 
@@ -6,14 +6,14 @@
 #include "CircularQueue.h"
 #include "Stream.h"
 
-// »ñÈ¡ modbus tcp/udp Êı¾İ°ü³¤¶È£¬²»Çø·ÖÇëÇóºÍÓ¦´ğ
+// è·å– modbus tcp/udp æ•°æ®åŒ…é•¿åº¦ï¼Œä¸åŒºåˆ†è¯·æ±‚å’Œåº”ç­”
 int MtcGetLength(byte* p, int len);
 int MtcGetLenCircularQueue(CircularQueue_t* queue);
 int MtcGetLenStream(Stream_t* st);
 
 
-// modbus tcp/udp Ïà¶ÔÓÚ rtu À´Ëµ£¬Í·²¿Ôö¼ÓÁË 6×Ö½Ú£¬Î²²¿ÉÙ2×Ö½Ú¡£
-// ÆäÓà²¿·ÖÒ»ÖÂ¡£²Î¿¼ modbus-rtu ¼´¿É¡£
+// modbus tcp/udp ç›¸å¯¹äº rtu æ¥è¯´ï¼Œå¤´éƒ¨å¢åŠ äº† 6å­—èŠ‚ï¼Œå°¾éƒ¨å°‘2å­—èŠ‚ã€‚
+// å…¶ä½™éƒ¨åˆ†ä¸€è‡´ã€‚å‚è€ƒ modbus-rtu å³å¯ã€‚
 // rtu				     addr cmd ndata 2crc
 // tcp   2seq 2pro 2len  addr cmd ndata
 
@@ -21,37 +21,37 @@ int MtcGetLenStream(Stream_t* st);
 #pragma pack(1)
 typedef struct
 {
-	// ÊÂÎñ£¬»Ø¸´³­ÇëÇó°ü£¬ÇëÇó°üÖ±½Ó¸ø0
+	// äº‹åŠ¡ï¼Œå›å¤æŠ„è¯·æ±‚åŒ…ï¼Œè¯·æ±‚åŒ…ç›´æ¥ç»™0
 	ushort Seq;
-	// Modbus Ìî 0
+	// Modbus å¡« 0
 	ushort Protocol;
-	// ³¤¶È£¬´ó¶Ë
+	// é•¿åº¦ï¼Œå¤§ç«¯
 	ushort Length;
-	// ¸ú modbus rtu µÄ addr Ò»Ñù£¬²»¹ıÃ»ÓĞÊ²Ã´ÒâÒå£¬Ò»°ãÓÃipÀ´Çø·Ö¡£
+	// è·Ÿ modbus rtu çš„ addr ä¸€æ ·ï¼Œä¸è¿‡æ²¡æœ‰ä»€ä¹ˆæ„ä¹‰ï¼Œä¸€èˆ¬ç”¨ipæ¥åŒºåˆ†ã€‚
 	byte Addr;
 }MtcHead_t;
 #pragma pack(pop)
 
-// 01 02 ÇëÇóÖ¸Áî¡£ len = 12
+// 01 02 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 12
 int Mtc01a02(MtcHead_t* head, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len);
-// 01 02 Ö¸Áî»Ø¸´¡£ len > (bitlen+7)/8 + 9;
-// bits Î´×ö´óĞ¡¶Ë´¦Àí
+// 01 02 æŒ‡ä»¤å›å¤ã€‚ len > (bitlen+7)/8 + 9;
+// bits æœªåšå¤§å°ç«¯å¤„ç†
 int MtcResult01a02(MtcHead_t* head, byte cmd, byte* bits, ushort bitlen, byte* data, int len);
 
-// 03 04 ÇëÇóÖ¸Áî¡£ len = 12
+// 03 04 è¯·æ±‚æŒ‡ä»¤ã€‚ len = 12
 int Mtc03a04(MtcHead_t* head, byte cmd, ushort regaddr, ushort regcnt, byte* data, int len);
-// 03 Ö¸Áî»Ø¸´¡£ len > regcnt * 2 + 9
-// reg Î´×ö´óĞ¡¶Ë´¦Àí
+// 03 æŒ‡ä»¤å›å¤ã€‚ len > regcnt * 2 + 9
+// reg æœªåšå¤§å°ç«¯å¤„ç†
 int MtcResult03a04(MtcHead_t* head, byte cmd, byte* reg, ushort regcnt, byte* data, int len);
 
-// 05 06 ÇëÇóÖ¸Áî  len = 12
-// 05 Ö¸ÁîÓĞĞ§Êı¾İ£º ff00 ºÏ  0000 ·Ö
-// 05¡¢ 06 Ô­Ñù»Ø¸´Êı¾İ¡£²»ÓÃ·â×°¡£
+// 05 06 è¯·æ±‚æŒ‡ä»¤  len = 12
+// 05 æŒ‡ä»¤æœ‰æ•ˆæ•°æ®ï¼š ff00 åˆ  0000 åˆ†
+// 05ã€ 06 åŸæ ·å›å¤æ•°æ®ã€‚ä¸ç”¨å°è£…ã€‚
 int Mtc05a06(MtcHead_t* head, byte cmd, ushort regaddr, ushort reg, byte* data, int len);
 
-// 10 ÇëÇóÖ¸Áî£¬ len > regcnt*2 + 13
-// regdata Î´×ö´óĞ¡¶Ë´¦Àí
+// 10 è¯·æ±‚æŒ‡ä»¤ï¼Œ len > regcnt*2 + 13
+// regdata æœªåšå¤§å°ç«¯å¤„ç†
 int Mtc10(MtcHead_t* head, ushort regaddr, byte* regdata, ushort regcnt, byte* data, int len);
-// 10 Ö¸Áî»Ø¸´  len = 12
+// 10 æŒ‡ä»¤å›å¤  len = 12
 int MtcResult10(MtcHead_t* head, ushort regaddr, ushort regcnt, byte* data, int len);
 
