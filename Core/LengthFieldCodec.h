@@ -9,11 +9,8 @@ typedef struct
 	short offset;
 	// 长度字段的长度，1/2/4/-2/-4  负数为大端。
 	short size;
-
-	// 用于解析用的数据缓冲区
-	// byte* cache;
 	// cache 长度
-	int cachelen;
+	short cachelen;
 }LengthFieldCodec_t;
 
 // 初始化 LengthFieldCodec_t 变量

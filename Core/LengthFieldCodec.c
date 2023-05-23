@@ -133,23 +133,6 @@ int LfcSetLength(LengthFieldCodec_t* lfc, byte* data, int dlen, int length)
 	return -4;
 }
 
-// 7 位压缩编码时候的数值占用字节数。
-// 嵌入式基本不会碰到 4g 以上的范围。 直接不考虑 64bit。 
-static int CompressionUintSize(int num)
-{
-	for (int i = 1; i < 5; i++)
-	{
-		// int max = 0x01 << (7 * i) - 1;
-		// if (num <= max)return i;
-
-		int maxInc = 0x01 << (7 * i);
-		if (num < maxInc)return i;
-	}
-
-	return -1;
-}
-
-
 int LfcGetLenCircularQueue(LengthFieldCodec_t* lfc, CircularQueue_t* queue)
 {
 	if (CircularQueueGetLength(queue) < lfc->cachelen)return -1;
@@ -200,7 +183,11 @@ int LfcGetLenStream(LengthFieldCodec_t* lfc, Stream_t* st)
 
 		StreamSeek(st, lfc->offset, SeekCurrent);
 		uint len = 0;
-		if (StreamReadCompressionUint(st, &len) < 1)len = -5;
+		if (StreamReadCompressionUint(st, &len) < 1)
+		{
+			st->Position = posi;
+			return -5;
+		}
 
 		// 恢复 posi
 		st->Position = posi;
