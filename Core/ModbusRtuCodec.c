@@ -56,7 +56,7 @@ int MrcSlaveGetLength(byte* p, int len)
 int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 {
 	if (queue == NULL)return 0;
-	int remian = CircularQueueRemain(queue);
+	int remian = CircularQueueGetLength(queue);
 	if (remian < 8)return 0;
 
 	// 拿到 cmd
