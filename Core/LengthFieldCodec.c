@@ -144,9 +144,8 @@ int LfcGetLenCircularQueue(LengthFieldCodec_t* lfc, CircularQueue_t* queue)
 		memcpy(&q2, queue, sizeof(q2));
 		CircularQueueSeek(&q2, lfc->offset);
 
-		int len = 0;
-		byte* p = (byte*)&len;
-		CircularQueueReads(queue, p, abs(lfc->size), true);
+		byte p[4];
+		CircularQueueReads(&q2, p, abs(lfc->size), true);
 
 		return normalRead(p, lfc->size);
 	}

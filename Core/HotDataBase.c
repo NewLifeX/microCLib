@@ -41,6 +41,8 @@ bool GetHotData(HotData_t* hot)
 {
 	if (ReadHot(0, hot))return true;
 	if (ReadHot(HotLen, hot))return true;
+
+	memset(hot, 0x00, sizeof(HotData_t));
 	return false;
 }
 

@@ -22,25 +22,25 @@ int MrcSlaveGetLength(byte* p, int len)
 	{
 		// 读指令长度都是 8 字节。
 		// 写单个寄存器长度也是 8字节。
-	case 1: // 读线圈   
-	case 2:	// 读离散输入  
+	case 1: // 读线圈 
+	case 2:	// 读离散输入 
 	case 3: // 读多个保持寄存器 
-	case 4: // 读输入寄存器 
-	case 5: // 读单个寄存器 
-	case 6: // 写寄存器 
+	case 4: // 读输入寄存器  
+	case 5: // 写单个线圈 
+	case 6: // 写单个寄存器 
 	{
 		if (Check(p, 8))return 8;
 		return -1;
 	}
 
-	case 0x10:
+	case 0x0f:	// 写多个线圈 
+	case 0x10:	// 写多个寄存器
 	{
 		// addr,cmd,regaddr2+regcnt2+len+ dataXlen +crc
 		ushort bytelen = p[6];
 		ushort regcnt = p[4] * 256 + p[5];
-
-		if (regcnt != bytelen / 2)return -2;
-		if (len == 0)return -2;
+		// 0f 指令的 regcnt 是 bitcnt。不能做这个判断。
+		// if (regcnt != bytelen / 2)return -2;
 		if (bytelen > 122)return -2;
 		if (len < bytelen)return 0;
 		// 固定长度是 9 字节
@@ -66,18 +66,17 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 
 	switch (cmd)
 	{
-		// 读指令长度都是 8 字节。
-		// 写单个寄存器长度也是 8字节。
-	case 1: // 读线圈   1bit
-	case 2:	// 读离散输入  1bit
-	case 3: // 读保持寄存器 16bit
-	case 4: // 读输入寄存器 16bit
-	case 6: // 写寄存器  16bit
+	case 1: 
+	case 2:	
+	case 3: 
+	case 4: 
+	case 6: 
 	{
 		if (Check(cache, 8))return 8;
 		return -1;
 	}
 
+	case 0x0f:
 	case 0x10:
 	{
 		/*
@@ -92,9 +91,9 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 		// addr,cmd,regaddr2+regcnt2+len+ dataXlen +crc
 		ushort len = cache[6];
 		ushort regcnt = cache[4] * 256 + cache[5];
-
-		if (regcnt != len / 2)return -2;
-		if (len == 0)return -2;
+		// 0f 指令的 regcnt 是 bitcnt。不能做这个判断。
+		// if (regcnt != len / 2)return -2;
+		// if (len == 0)return -2;
 		if (len > 122)return -2;
 		if (remian < len)return 0;
 
@@ -208,6 +207,54 @@ int Mrc05a06(byte addr, byte cmd, ushort regaddr, ushort reg, byte* data, int le
 	ushort temp = __REV16x(regaddr);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 	temp = __REV16x(reg);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+
+	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
+	temp = __REV16x(crc);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+
+	return st.Position;
+}
+
+int Mrc0f(byte addr, ushort regaddr, byte* bitdata, ushort bitcnt, byte bytelen, byte* data, int len)
+{
+	if (data == NULL)return -1;
+	if (len < bytelen + 9)return -1;
+
+	Stream_t st;
+	StreamInit(&st, data, len);
+
+	StreamWriteByte(&st, addr);
+	StreamWriteByte(&st, 0x10);
+	ushort temp = __REV16x(regaddr);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+	temp = __REV16x(bitcnt);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+	StreamWriteByte(&st, bytelen);
+	StreamWriteBytes(&st, bitdata, bytelen);
+
+	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
+	temp = __REV16x(crc);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+
+	return st.Position;
+}
+
+// 0f 指令回复
+int MrcResult0f(byte addr, ushort regaddr, ushort bitcnt, byte* data, int len)
+{
+	if (data == NULL)return -1;
+	if (len < 8)return -1;
+
+	Stream_t st;
+	StreamInit(&st, data, len);
+
+	StreamWriteByte(&st, addr);
+	StreamWriteByte(&st, 0x10);
+
+	ushort temp = __REV16x(regaddr);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+	temp = __REV16x(bitcnt);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);

@@ -17,6 +17,17 @@ int MtcGetLenStream(Stream_t* st);
 // rtu				     addr cmd ndata 2crc
 // tcp   2seq 2pro 2len  addr cmd ndata
 
+/*
+1:  读线圈
+2:	读离散输入
+3:  读多个保持寄存器
+4:  读输入寄存器
+5:  写单个线圈
+6:  写单个寄存器
+15  写多个线圈 
+16	写多个寄存器
+*/
+
 #pragma pack(push)
 #pragma pack(1)
 typedef struct
@@ -48,6 +59,12 @@ int MtcResult03a04(MtcHead_t* head, byte cmd, byte* reg, ushort regcnt, byte* da
 // 05 指令有效数据： ff00 合  0000 分
 // 05、 06 原样回复数据。不用封装。
 int Mtc05a06(MtcHead_t* head, byte cmd, ushort regaddr, ushort reg, byte* data, int len);
+
+// 0f 请求指令， len > bytelen + 9
+// bitdata 未做大小端处理
+int Mtc0f(MtcHead_t* head, ushort regaddr, byte* bitdata, ushort bitcnt, byte bytelen, byte* data, int len);
+// 0f 指令回复  len = 8
+int MtcResult0f(MtcHead_t* head, ushort regaddr, ushort bitcnt, byte* data, int len);
 
 // 10 请求指令， len > regcnt*2 + 13
 // regdata 未做大小端处理

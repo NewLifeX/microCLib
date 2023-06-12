@@ -14,6 +14,8 @@ static const LengthFieldCodec_t Lfc =
 int MtcGetLength(byte* p, int len)
 {
 	int res = LfcGetLength((LengthFieldCodec_t*)&Lfc, p, len);
+
+	if (res > 128)return -2;
 	if (res > 0)return res + 6;
 	return res;
 }
@@ -21,6 +23,8 @@ int MtcGetLength(byte* p, int len)
 int MtcGetLenCircularQueue(CircularQueue_t* queue)
 {
 	int res = LfcGetLenCircularQueue((LengthFieldCodec_t*)&Lfc, queue);
+
+	if (res > 128)return -2;
 	if (res > 0)return res + 6;
 	return res;
 }
@@ -28,6 +32,8 @@ int MtcGetLenCircularQueue(CircularQueue_t* queue)
 int MtcGetLenStream(Stream_t* st)
 {
 	int res = LfcGetLenStream((LengthFieldCodec_t*)&Lfc, st);
+
+	if (res > 128)return -2;
 	if (res > 0)return res + 6;
 	return res;
 }
@@ -41,14 +47,14 @@ int Mtc01a02(MtcHead_t* head, byte cmd, ushort regaddr, ushort bitlen, byte* dat
 	Stream_t st;
 	StreamInit(&st, data, len);
 
-	StreamWriteBytes(&st, (byte*)head,sizeof(MtcHead_t));
+	StreamWriteBytes(&st, (byte*)head, sizeof(MtcHead_t));
 	StreamWriteByte(&st, cmd);
 	ushort temp = __REV16x(regaddr);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 	temp = __REV16x(bitlen);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
-	LfcSetLength((LengthFieldCodec_t*) & Lfc, data, len, st.Position);
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
 
 	return st.Position;
 }
@@ -72,7 +78,7 @@ int MtcResult01a02(MtcHead_t* head, byte cmd, byte* bits, ushort bitlen, byte* d
 
 	StreamWriteBytes(&st, bits, bytelen);
 
-	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position);
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
 
 	return st.Position;
 }
@@ -97,7 +103,7 @@ int MtcResult03a04(MtcHead_t* head, byte cmd, byte* reg, ushort regcnt, byte* da
 	StreamWriteByte(&st, regcnt * 2);
 	StreamWriteBytes(&st, reg, regcnt * 2);
 
-	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position);
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
 
 	return st.Position;
 }
@@ -118,7 +124,51 @@ int Mtc05a06(MtcHead_t* head, byte cmd, ushort regaddr, ushort reg, byte* data, 
 	temp = __REV16x(reg);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
-	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position);
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
+
+	return st.Position;
+}
+
+int Mtc0f(MtcHead_t* head, ushort regaddr, byte* bitdata, ushort bitcnt, byte bytelen, byte* data, int len)
+{
+	if (data == NULL)return -1;
+	if (len < bytelen + 13)return -1;
+
+	Stream_t st;
+	StreamInit(&st, data, len);
+
+	StreamWriteBytes(&st, (byte*)head, sizeof(MtcHead_t));
+	StreamWriteByte(&st, 0x10);
+	ushort temp = __REV16x(regaddr);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+	temp = __REV16x(bitcnt);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+	StreamWriteByte(&st, bytelen);
+	StreamWriteBytes(&st, bitdata, bytelen);
+
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
+
+	return st.Position;
+}
+
+// 0f 指令回复
+int MtcResult0f(MtcHead_t* head, ushort regaddr, ushort bitcnt, byte* data, int len)
+{
+	if (data == NULL)return -1;
+	if (len < 12)return -1;
+
+	Stream_t st;
+	StreamInit(&st, data, len);
+
+	StreamWriteBytes(&st, (byte*)head, sizeof(MtcHead_t));
+	StreamWriteByte(&st, 0x10);
+
+	ushort temp = __REV16x(regaddr);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+	temp = __REV16x(bitcnt);
+	StreamWriteBytes(&st, (byte*)&temp, 2);
+
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
 
 	return st.Position;
 }
@@ -140,7 +190,7 @@ int Mtc10(MtcHead_t* head, ushort regaddr, byte* regdata, ushort regcnt, byte* d
 	StreamWriteByte(&st, regcnt * 2);
 	StreamWriteBytes(&st, regdata, regcnt * 2);
 
-	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position);
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
 
 	return st.Position;
 }
@@ -162,7 +212,7 @@ int MtcResult10(MtcHead_t* head, ushort regaddr, ushort regcnt, byte* data, int 
 	temp = __REV16x(regcnt);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
-	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position);
+	LfcSetLength((LengthFieldCodec_t*)&Lfc, data, len, st.Position - 6);
 
 	return st.Position;
 }

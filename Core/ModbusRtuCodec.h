@@ -6,6 +6,15 @@
 
 /*
 
+1:  读线圈
+2:	读离散输入
+3:  读多个保持寄存器
+4:  读输入寄存器
+5:  写单个线圈
+6:  写单个寄存器
+15  写多个线圈 
+16	写多个寄存器
+
 // modbus 请求包格式
 
 // 请求包
@@ -15,14 +24,16 @@
 // 04   addr+cmd+2regaddr+2regcnt+2crc
 // 05   addr+cmd+2regaddr+2data+2crc
 // 06   addr+cmd+2regaddr+2data+2crc
+// 0f	addr+cmd+2regaddr+2bitcnt+bytelen+ (bytelen*data) +2crc
 // 10	addr+cmd+2regaddr+2regcnt+bytelen+ (bytelen*data) +2crc
 
 // 回复包
-// 01	addr+cmd+bitcnt+ N * bits +2crc
-// 02	addr+cmd+bitcnt+ N * bits +2crc
+// 01	addr+cmd+bitcnt+ N * bits +2crc		// bits 字节序是小端
+// 02	addr+cmd+bitcnt+ N * bits +2crc		// bits 字节序是小端
 // 03	addr+cmd+bytelen+ (bytelen*data) +2crc
 // 04	addr+cmd+bytelen+ (bytelen*data) +2crc
 // 05   06   等于请求包
+// 10	addr+cmd+2regaddr+2bitcnt+2crc
 // 10	addr+cmd+2regaddr+2regcnt+2crc
 
 解释：
@@ -62,6 +73,12 @@ int MrcResult03a04(byte addr,byte cmd, byte* reg, ushort regcnt, byte* data, int
 // 05 指令有效数据： ff00 合  0000 分
 // 05、 06 原样回复数据。不用封装。
 int Mrc05a06(byte addr, byte cmd, ushort regaddr, ushort reg, byte* data, int len);
+
+// 0f 请求指令， len > bytelen + 9
+// bitdata 未做大小端处理
+int Mrc0f(byte addr, ushort regaddr, byte* bitdata, ushort bitcnt, byte bytelen, byte* data, int len);
+// 0f 指令回复  len = 8
+int MrcResult0f(byte addr, ushort regaddr, ushort bitcnt, byte* data, int len);
 
 // 10 请求指令， len > regcnt*2 + 9
 // regdata 未做大小端处理
