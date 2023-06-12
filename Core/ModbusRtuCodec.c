@@ -2,14 +2,24 @@
 #include "ModbusRtuCodec.h"
 #include "Crc.h"
 
+#include "Debug.h"
+
+// 特别注意，modbusrtu 数据域是大端，crc 是小端。
+
+
 static bool Check(byte* data, int len)
 {
 	if (data == NULL)return false;
 
 	ushort crc = CaclcCRC16_MODBUS(data, len - 2);
 	ushort pktcrc = data[len - 2] * 256 + data[len - 1];
+	if (crc == pktcrc)return true;
+	ushort pktcrc2 = data[len - 1] * 256 + data[len - 2];
+	if (crc == pktcrc2)return true;
 
-	return crc == pktcrc;
+	// DebugPrintf("%04X  %04X", crc, pktcrc);
+
+	return false;
 }
 
 int MrcSlaveGetLength(byte* p, int len)
@@ -66,11 +76,12 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 
 	switch (cmd)
 	{
-	case 1: 
-	case 2:	
-	case 3: 
-	case 4: 
-	case 6: 
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	case 5:
+	case 6:
 	{
 		if (Check(cache, 8))return 8;
 		return -1;
@@ -135,7 +146,7 @@ int Mrc01a02(byte addr, byte cmd, ushort regaddr, ushort bitlen, byte* data, int
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	temp = __REV16x(crc);
+	temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -160,7 +171,7 @@ int MrcResult01a02(byte addr, byte cmd, byte* bits, ushort bitlen, byte* data, i
 	StreamWriteBytes(&st, bits, bytelen);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	ushort temp = __REV16x(crc);
+	ushort temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -187,7 +198,7 @@ int MrcResult03a04(byte addr, byte cmd, byte* reg, ushort regcnt, byte* data, in
 	StreamWriteBytes(&st, reg, regcnt * 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	ushort temp = __REV16x(crc);
+	ushort temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -210,7 +221,7 @@ int Mrc05a06(byte addr, byte cmd, ushort regaddr, ushort reg, byte* data, int le
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	temp = __REV16x(crc);
+	temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -234,7 +245,7 @@ int Mrc0f(byte addr, ushort regaddr, byte* bitdata, ushort bitcnt, byte bytelen,
 	StreamWriteBytes(&st, bitdata, bytelen);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	temp = __REV16x(crc);
+	temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -258,7 +269,7 @@ int MrcResult0f(byte addr, ushort regaddr, ushort bitcnt, byte* data, int len)
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	temp = __REV16x(crc);
+	temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -278,11 +289,11 @@ int Mrc10(byte addr, ushort regaddr, byte* regdata, ushort regcnt, byte* data, i
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 	temp = __REV16x(regcnt);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
-	StreamWriteByte(&st, regcnt*2);
+	StreamWriteByte(&st, regcnt * 2);
 	StreamWriteBytes(&st, regdata, regcnt * 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	temp = __REV16x(crc);
+	temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
@@ -306,8 +317,10 @@ int MrcResult10(byte addr, ushort regaddr, ushort regcnt, byte* data, int len)
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	ushort crc = CaclcCRC16_MODBUS(st.MemStart, st.Position);
-	temp = __REV16x(crc);
+	temp = (crc);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 
 	return st.Position;
 }
+
+

@@ -45,6 +45,27 @@ __inline void SetBit(byte* data, int idx, bool value)
 	data[(idx >> 3)] = dat;
 }
 
+/// <summary>设置多bit</summary>
+/// <param name="dst">目标</param>
+/// <param name="dst_offset">目标偏移量</param>
+/// <param name="src">源</param>
+/// <param name="src_offset">源偏移量</param>
+/// <param name="bits">需要set的数量</param>
+void SetBits(byte* dst, int dst_offset, byte src, int src_offset, int bits)
+{
+	if (dst == NULL)return;
+	if (src == NULL)return;
+
+	for (int i = 0; i < bits; i++)
+	{
+		bool value = GetBit(src, src_offset);
+		SetBit(dst, dst_offset, value);
+
+		src_offset++;
+		dst_offset++;
+	}
+}
+
 /// <summary>字节bit倒序</summary>
 byte BitReverse(byte data)
 {
