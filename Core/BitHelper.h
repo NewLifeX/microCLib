@@ -19,7 +19,7 @@ void SetBit(byte* data, int idx, bool value);
 /// <param name="src">源</param>
 /// <param name="src_offset">源偏移量</param>
 /// <param name="bits">需要set的数量</param>
-void SetBits(byte* dst, int dst_offset, byte src, int src_offset, int bits);
+void SetBits(byte* dst, int dst_offset, byte* src, int src_offset, int bits);
 
 /// <summary>字节bit倒序</summary>
 byte BitReverse(byte data);

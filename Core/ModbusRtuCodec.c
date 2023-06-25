@@ -48,7 +48,7 @@ int MrcSlaveGetLength(byte* p, int len)
 	{
 		// addr,cmd,regaddr2+regcnt2+len+ dataXlen +crc
 		ushort bytelen = p[6];
-		ushort regcnt = p[4] * 256 + p[5];
+		// ushort regcnt = p[4] * 256 + p[5];
 		// 0f 指令的 regcnt 是 bitcnt。不能做这个判断。
 		// if (regcnt != bytelen / 2)return -2;
 		if (bytelen > 122)return -2;
@@ -101,7 +101,7 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 
 		// addr,cmd,regaddr2+regcnt2+len+ dataXlen +crc
 		ushort len = cache[6];
-		ushort regcnt = cache[4] * 256 + cache[5];
+		// ushort regcnt = cache[4] * 256 + cache[5];
 		// 0f 指令的 regcnt 是 bitcnt。不能做这个判断。
 		// if (regcnt != len / 2)return -2;
 		// if (len == 0)return -2;
