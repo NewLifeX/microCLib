@@ -36,15 +36,10 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			// 清空缓冲区
 			memset(txpy, 0x00, bitcnt / 8 + 1);
 			// 读 bit 空间
-			Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-			ar.Addr = regaddr;
-			ar.Size = bitcnt;
-			ar.Buff = txpy;
-			if (mrs->BitAreas != NULL) AreaRead(&ar, mrs->BitAreas, true);
-			// 构建回复
+			if (mrs->BitAreas != NULL) AreaRead2(mrs->BitAreas, regaddr, txpy, bitcnt, true);
 			int txlen = MrcResult01a02(addr, cmd, txpy, bitcnt, tx, sizeof(tx));
+
 			ShowArray("-> ", tx, txlen, txlen);
-			// Rs485Send2(tx, txlen);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}break;
 		// 写输出线圈
@@ -52,16 +47,11 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 		{
 			ushort regaddr = (p[2] << 8) + p[3];
 			ushort regdata = (p[4] << 8) + p[5];
-
 			byte value = regdata > 0 ? 0x01 : 0x00;
-			Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-			ar.Addr = regaddr;
-			ar.Buff = &value;
-			ar.Size = 1;
-			if (mrs->BitAreas != NULL) AreaWrite(mrs->BitAreas, &ar, true);
+
+			if (mrs->BitAreas != NULL) AreaWrite2(mrs->BitAreas, regaddr, &value, 1, true);
 
 			ShowArray("-> ", p, pklen, pklen);
-			// Rs485Send2(p, pklen);
 			if (mrs->Send != NULL) mrs->Send(p, pklen, sendparam);
 		}break;
 		// 写输出线圈S
@@ -70,19 +60,12 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			ushort regaddr = (p[2] << 8) + p[3];
 			ushort bitcnt = (p[4] << 8) + p[5];
 
-			Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-			ar.Addr = regaddr;
-			ar.Buff = &p[7];
-			ar.Size = bitcnt;
-			if (mrs->BitAreas != NULL) AreaWrite(mrs->BitAreas, &ar, true);
-
+			if (mrs->BitAreas != NULL) AreaWrite2(mrs->BitAreas, regaddr, &p[7], bitcnt, true);
 			int txlen = MrcResult0f(addr, regaddr, bitcnt, tx, sizeof(tx));
+
 			ShowArray("-> ", tx, txlen, txlen);
-			// Rs485Send2(tx, txlen);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}break;
-
-
 		case 3:	// 读多个保持寄存器
 		case 4:	// 读输入寄存器
 		{
@@ -93,17 +76,11 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			// 清空缓冲区
 			memset(txpy, 0x00, regcnt * 2);
 			// 读 byte 空间
-			Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
 			// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
-			ar.Addr = regaddr * 2;
-			ar.Size = regcnt * 2;
-			ar.Buff = txpy;
-			if (mrs->ByteAreas != NULL) AreaRead(&ar, mrs->ByteAreas, false);
-
-			// 构建回复
+			if (mrs->ByteAreas != NULL) AreaRead2(mrs->ByteAreas, regaddr * 2, txpy, regcnt * 2, false);
 			int txlen = MrcResult03a04(addr, cmd, txpy, regcnt, tx, sizeof(tx));
+
 			ShowArray("-> ", tx, txlen, txlen);
-			// Rs485Send2(tx, txlen);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}
 		break;
@@ -112,15 +89,10 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			ushort regaddr = (p[2] << 8) + p[3];
 			ushort regdata = (p[4] << 8) + p[5];
 
-			Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
 			// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
-			ar.Addr = regaddr * 2;
-			ar.Size = 2;
-			ar.Buff = (byte*)&regdata;
-			if (mrs->ByteAreas != NULL) AreaWrite(mrs->ByteAreas, &ar, false);
+			if (mrs->ByteAreas != NULL) AreaWrite2(mrs->ByteAreas, regaddr * 2, (byte*)&regdata, 2, false);
 
 			ShowArray("-> ", p, pklen, pklen);
-			// Rs485Send2(p, pklen);
 			if (mrs->Send != NULL) mrs->Send(p, pklen, sendparam);
 		}break;
 		case 0x10:
@@ -128,16 +100,11 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			ushort regaddr = (p[2] << 8) + p[3];
 			ushort regcnt = (p[4] << 8) + p[5];
 
-			Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
 			// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
-			ar.Addr = regaddr * 2;
-			ar.Size = regcnt * 2;
-			ar.Buff = &p[7];
-			if (mrs->ByteAreas != NULL) AreaWrite(mrs->ByteAreas, &ar, false);
-
+			if (mrs->ByteAreas != NULL) AreaWrite2(mrs->ByteAreas, regaddr * 2, &p[7], regcnt * 2, false);
 			int txlen = MrcResult10(addr, regaddr, regcnt, tx, sizeof(tx));
+
 			ShowArray("-> ", tx, txlen, txlen);
-			// Rs485Send2(tx, txlen);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}break;
 
@@ -199,15 +166,10 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		// 清空缓冲区
 		memset(txpy, 0x00, bitcnt / 8 + 1);
 		// 读 bit 空间
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-		ar.Addr = regaddr;
-		ar.Size = bitcnt;
-		ar.Buff = txpy;
-		if (mrs->BitAreas != NULL)AreaRead(&ar, mrs->BitAreas, true);
-
+		if (mrs->BitAreas != NULL)AreaRead2(mrs->BitAreas, regaddr, txpy, bitcnt, true);
 		int txlen = MtcResult01a02(head, cmd, txpy, bitcnt, tx, sizeof(tx));
+
 		ShowArray("-> ", tx, txlen, txlen);
-		// bigsend(mi->SocId, tx, txlen, 5);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 	// 读输出线圈
@@ -219,16 +181,10 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		// 清空缓冲区
 		memset(txpy, 0x00, bitcnt / 8 + 1);
 		// 读 bit 空间
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-		ar.Addr = regaddr;
-		ar.Size = bitcnt;
-		ar.Buff = txpy;
-		if (mrs->BitAreas != NULL)AreaRead(&ar, mrs->BitAreas, true);
-
+		if (mrs->BitAreas != NULL)AreaRead2(mrs->BitAreas, regaddr, txpy, bitcnt, true);
 		int txlen = MtcResult01a02(head, cmd, txpy, bitcnt, tx, sizeof(tx));
 
 		ShowArray("-> ", tx, txlen, txlen);
-		// bigsend(mi->SocId, tx, txlen, 5);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 	// 写输出线圈
@@ -238,14 +194,9 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		ushort regdata = (p[4] << 8) + p[5];
 
 		byte value = regdata > 0 ? 0x01 : 0x00;
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-		ar.Addr = regaddr;
-		ar.Buff = &value;
-		ar.Size = 1;
-		if (mrs->BitAreas != NULL)AreaWrite(mrs->BitAreas, &ar, true);
+		if (mrs->BitAreas != NULL)AreaWrite2(mrs->BitAreas, regaddr, &value, 1, true);
 
 		ShowArray("-> ", pk, pklen, pklen);
-		// bigsend(mi->SocId, pk, pklen, 5);
 		if (mrs->Send != NULL)mrs->Send(pk, pklen, sendparam);
 	}break;
 	// 写输出线圈S
@@ -254,15 +205,10 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		ushort regaddr = (p[2] << 8) + p[3];
 		ushort bitcnt = (p[4] << 8) + p[5];
 
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
-		ar.Addr = regaddr;
-		ar.Buff = &p[7];
-		ar.Size = bitcnt;
-		if (mrs->BitAreas != NULL)AreaWrite(mrs->BitAreas, &ar, true);
-
+		if (mrs->BitAreas != NULL)AreaWrite2(mrs->BitAreas, regaddr, &p[7], bitcnt, true);
 		int txlen = MtcResult0f(head, regaddr, bitcnt, tx, sizeof(tx));
+
 		ShowArray("-> ", tx, txlen, txlen);
-		// bigsend(mi->SocId, tx, txlen, 5);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 
@@ -277,17 +223,11 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		// 清空缓冲区
 		memset(txpy, 0x00, regcnt * 2);
 		// 读 byte 空间
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
 		// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
-		ar.Addr = regaddr * 2;
-		ar.Size = regcnt * 2;
-		ar.Buff = txpy;
-		if (mrs->ByteAreas != NULL)AreaRead(&ar, mrs->ByteAreas, false);
-
-		// 构建回复
+		if (mrs->ByteAreas != NULL)AreaRead2(mrs->ByteAreas, regaddr * 2, txpy, regcnt * 2, false);
 		int txlen = MtcResult03a04(head, cmd, txpy, regcnt, tx, sizeof(tx));
+
 		ShowArray("-> ", tx, txlen, txlen);
-		// bigsend(mi->SocId, tx, txlen, 5);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}
 	break;
@@ -296,15 +236,10 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		ushort regaddr = (p[2] << 8) + p[3];
 		ushort regdata = (p[4] << 8) + p[5];
 
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
 		// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
-		ar.Addr = regaddr * 2;
-		ar.Size = 2;
-		ar.Buff = (byte*)&regdata;
-		if (mrs->ByteAreas != NULL)AreaWrite(mrs->ByteAreas, &ar, false);
+		if (mrs->ByteAreas != NULL)AreaWrite2(mrs->ByteAreas, regaddr * 2, (byte*)&regdata, 2, false);
 
 		ShowArray("-> ", pk, pklen, pklen);
-		// bigsend(mi->SocId, pk, pklen, 5);
 		if (mrs->Send != NULL)mrs->Send(pk, pklen, sendparam);
 	}break;
 	case 0x10:
@@ -312,16 +247,11 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		ushort regaddr = (p[2] << 8) + p[3];
 		ushort regcnt = (p[4] << 8) + p[5];
 
-		Area_t ar;	ar.Init = NULL; ar.Fresh = NULL;
 		// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
-		ar.Addr = regaddr * 2;
-		ar.Size = regcnt * 2;
-		ar.Buff = &p[7];
-		if (mrs->ByteAreas != NULL)AreaWrite(mrs->ByteAreas, &ar, false);
-
+		if (mrs->ByteAreas != NULL)AreaWrite2(mrs->ByteAreas, regaddr * 2, &p[7], regcnt * 2, false);
 		int txlen = MtcResult10(head, regaddr, regcnt, tx, sizeof(tx));
+
 		ShowArray("-> ", tx, txlen, txlen);
-		// bigsend(mi->SocId, tx, txlen, 5);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 

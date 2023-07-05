@@ -41,4 +41,3 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 /// <param name="mrs">注意：不使用 SlaveAddr 字段</param>
 /// <param name="sendparam">mrs->Send 函数的第三个参数</param>
 void ModbusTcpTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void* sendparam);
-

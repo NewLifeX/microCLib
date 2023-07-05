@@ -25,7 +25,7 @@ typedef struct VirtualArea
 }Area_t;
 
 // 将 src 的数据写到 dst 内。
-int AreaCopy(Area_t* dst, Area_t* src);
+int AreaByteCopy(Area_t* dst, Area_t* src);
 
 // 将 src 的 bit 数据写到 dst 内。
 int AreaBitCopy(Area_t* dst, Area_t* src);
@@ -43,9 +43,25 @@ void AreaRead(Area_t* dst, Area_t* srcs, bool isBit);
 void AreaWrite(Area_t* dsts, Area_t* src, bool isBit);
 
 
+/// <summary>从多个空间读取数据</summary>
+/// <param name="srcs">被读空间s</param>
+/// <param name="addr">读地址</param>
+/// <param name="data">读缓冲</param>
+/// <param name="len">读长度</param>
+/// <param name="isBit">是否是bit空间</param>
+void AreaRead2(Area_t* srcs, int addr, byte* data, int len, bool isBit);
+
+/// <summary>向多个空间写数据</summary>
+/// <param name="dsts">被写入</param>
+/// <param name="addr">写入地址</param>
+/// <param name="data">写入数据</param>
+/// <param name="len">写入长度</param>
+/// <param name="isBit">是否是bit空间</param>
+void AreaWrite2(Area_t* dsts, int addr, byte* data, int len, bool isBit);
+
+
 /*
 modbus 参考使用。
-
 
 void OutInit(Area_t* thiss)
 {
@@ -88,35 +104,14 @@ Area_t ByteAreas[] =
 	{.Size = 0 }
 };
 
-int ReadBit(ushort addr, byte* data, int len)
-{
-	Area_t ar;
-	ar.Addr = addr;
-	ar.Size = len;
-	ar.Buff = data;
+// bit 线圈 in/out 操作
+AreaRead2(BitAreas, addr, data, len ,true);
+AreaWrite2(BitAreas, addr, data, len ,true);
 
-	AreaRead(&ar, BitAreas, true);
-}
+// 寄存器操作，因为寄存器是 short 位宽，地址需要 X 2 
+AreaRead2(BitAreas, regaddr * 2, data, regcnt * 2 ,true);
+AreaWrite2(BitAreas, regaddr * 2, data, regcnt * 2 ,true);
 
-int WriteBit(ushort addr, byte* data, int len)
-{
-	Area_t ar;
-	ar.Addr = addr;
-	ar.Size = len;
-	ar.Buff = data;
-
-	AreaWrite(BitAreas, &ar, true);
-}
-
-int ReadByte(ushort addr, byte* data, int len)
-{
-	Area_t ar;
-	ar.Addr = addr;
-	ar.Size = len;
-	ar.Buff = data;
-
-	AreaRead(&ar, ByteAreas, false);
-}
 */
 
 
