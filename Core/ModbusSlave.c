@@ -22,7 +22,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 	byte addr = p[0];
 	byte cmd = p[1];
 
-	if (addr == (*mrs->SlaveAddr))
+	if ((addr == (*mrs->SlaveAddr)) || (addr == 0xff))
 	{
 		switch (cmd)
 		{
@@ -138,7 +138,7 @@ void ModbusRtuTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void*
 void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* sendparam)
 {
 	if (pk == NULL)return;
-	if (pklen < 8 + 6)return;
+	if (pklen < 6 + 6)return;
 
 	ShowArray("Rev ", pk, pklen, pklen);
 	if (mrs == NULL)return;
