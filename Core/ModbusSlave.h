@@ -3,6 +3,7 @@
 #include "Type.h"
 #include "VirtualArea.h"
 #include "CircularQueue.h"
+#include "Stream.h"
 
 typedef struct
 {
@@ -41,3 +42,10 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 /// <param name="mrs">注意：不使用 SlaveAddr 字段</param>
 /// <param name="sendparam">mrs->Send 函数的第三个参数</param>
 void ModbusTcpTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void* sendparam);
+
+/// <summary>尝试处理 MODBUS TCP/UDP 数据</summary>
+/// <param name="ms"></param>
+/// <param name="mrs">注意：不使用 SlaveAddr 字段</param>
+/// <param name="sendparam">mrs->Send 函数的第三个参数</param>
+/// <remake>Modbus tcp/udp 数据报文是相同的，udp 无需 CircularQueue_t 处理粘连问题，用 Stream_t 更简洁</remake>
+void ModbusUdpTryProcess(Stream_t* ms, const ModbusSlave_t* mrs, void* sendparam);

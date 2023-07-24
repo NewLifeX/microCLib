@@ -279,3 +279,19 @@ void ModbusTcpTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void*
 	// free
 	GlobleFree(pk);
 }
+
+void ModbusUdpTryProcess(Stream_t* ms, const ModbusSlave_t* mrs, void* sendparam)
+{
+	// 因为 UDP 不存在数据包粘连问题，而且是一次性到达。
+	// 没有使用 CircularQueue_t 的情况。
+	// 使用 Stream_t  或者  Buffer 都可以。
+	// UDP 数据包与 TCP 完全相同。
+	if (ms == NULL)return;
+	// if (StreamRemian(ms) < 12)return;
+	int pklen = MtcGetLenStream(ms);
+	// 不够长 或者 数据包有问题。
+	if (pklen <= 0)return;
+
+	// 处理数据
+	ModbusTcpMsgProcess(mrs, ms->MemStart + ms->Position, pklen, sendparam);
+}
