@@ -243,3 +243,124 @@ bool ArrayEqual(byte* b1, byte* b2, int len)
 	return true;
 }
 
+static inline char tohex(byte by)
+{
+	if (by > 9)return by - 10 + 'A';
+	return by + '0';
+}
+
+int ArrayToHex(byte* bs, int len, char* hex)
+{
+	if (bs == NULL)return 0;
+	if (hex == NULL)return 0;
+
+	for (int i = 0; i < len; i++)
+	{
+		*hex++ = tohex(bs[i] >> 4);
+		*hex++ = tohex(bs[i] & 0x0f);
+	}
+
+	return len * 2;
+}
+
+static inline byte toby(char ch)
+{
+	if ((ch >= 'a') && (ch <= 'f'))return ch - 'A' + 10;
+	if ((ch >= 'A') && (ch <= 'F'))return ch - 'A' + 10;
+	if ((ch >= '0') && (ch <= '9'))return ch - '0';
+
+	return 0xff;
+}
+
+int HexToArray(char* hex, int len, byte* bs)
+{
+	if (hex == NULL)return 0;
+	if (bs == NULL)return 0;
+	len /= 2;
+
+	for (int i = 0; i < len; i++)
+	{
+		byte h = toby(hex[i * 2]);
+		byte l = toby(hex[i * 2 + 1]);
+
+		if (h == 0xff)return 0;
+		if (l == 0xff)return 0;
+
+		bs[i] = (h << 4) + l;
+	}
+
+	return len;
+}
+
+/// <summary>二分法查询</summary>
+/// <param name="array">从小到大排序的数组</param>
+/// <param name="len">数组长度</param>
+/// <param name="value">查询值</param>
+/// <returns>返回第一个有效值。 -1 未找到</returns>
+int DichotomyFind_Int(int* array, int len, int value)
+{
+	if (array == NULL)return -1;
+	if (len == 0)return -1;
+	if (len == 1)return array[0] == value ? 0 : -1;
+
+	int head = 0;
+	int tail = len - 1;
+
+	while (true)
+	{
+		int half = (head + tail) / 2;
+		int p = array[half];
+
+		if (value == p)
+		{
+			return half;
+		}
+		else if (value < p)
+		{
+			tail = half - 1;
+		}
+		else
+		{
+			head = half + 1;
+		}
+
+		if (head > tail)return -1;
+	}
+}
+
+/// <summary>二分法，从结构体查询</summary>
+/// <param name="array">结构体数组，按照KEY从小到大排序</param>
+/// <param name="len">结构体长度</param>
+/// <param name="func">获取KEY方法</param>
+/// <param name="key">查询项</param>
+/// <returns>返回第一个有效值。 -1 未找到</returns>
+int DichotomyFind_Obj(void* array, int len, DichotomyGetKey func, int key)
+{
+	if (array == NULL)return -1;
+	if (len == 0)return -1;
+	if (len == 1)return func(array,0) == key ? 0 : -1;
+
+	int head = 0;
+	int tail = len - 1;
+
+	while (true)
+	{
+		int half = (head + tail) / 2;
+		int p = func(array, half);
+
+		if (key == p)
+		{
+			return half;
+		}
+		else if (key < p)
+		{
+			tail = half - 1;
+		}
+		else
+		{
+			head = half + 1;
+		}
+
+		if (head > tail)return -1;
+	}
+}

@@ -25,6 +25,8 @@ typedef enum
 }SeekOrigin_e;
 
 void StreamInit(Stream_t* st, byte* p, int len);
+// 当前游标对应的指针位置。
+byte* StreamCurrPoint(Stream_t* st);
 
 int StreamWriteByte(Stream_t* st, byte data);
 int StreamWriteUshort(Stream_t* st, ushort data);

@@ -11,6 +11,16 @@ void StreamInit(Stream_t* st, byte* p, int len)
 	st->Size = len;
 }
 
+byte* StreamCurrPoint(Stream_t* st)
+{
+	if (st == NULL)return NULL;
+	if (st->MemStart == NULL)return NULL;
+	// if (st->Size < 1)return NULL;
+	if (st->Position >= st->Size)return NULL;
+
+	return &st->MemStart[st->Position];
+}
+
 int StreamWriteByte(Stream_t* st, byte data)
 {
 	if (st == NULL)return 0;

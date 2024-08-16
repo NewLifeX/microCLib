@@ -2,39 +2,6 @@
 #include "cJsonProcess.h"
 
 
-int JsonTryGetValue_Int(cJSON* json, char* name, int def)
-{
-	if (json == NULL)return def;
-	if (name == NULL)return def;
-
-	cJSON* obj = cJSON_GetObjectItem(json, name);
-	if (obj == NULL)return def;
-
-	return obj->valueint;
-}
-
-double JsonTryGetValue_Double(cJSON* json, char* name, double def)
-{
-	if (json == NULL)return def;
-	if (name == NULL)return def;
-
-	cJSON* obj = cJSON_GetObjectItem(json, name);
-	if (obj == NULL)return def;
-
-	return obj->valuedouble;
-}
-
-char* JsonTryGetValue_String(cJSON* json, char* name, char* def)
-{
-	if (json == NULL)return def;
-	if (name == NULL)return def;
-
-	cJSON* obj = cJSON_GetObjectItem(json, name);
-	if (obj == NULL)return def;
-
-	return obj->valuestring;
-}
-
 // 处理 Json
 bool JsonProcessMsg(Buffer2_t* buff, cJsonProcess_t* ProcessArray)
 {

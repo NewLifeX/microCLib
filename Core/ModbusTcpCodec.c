@@ -1,4 +1,4 @@
-﻿
+
 #include "Type.h"
 #include "ModbusTcpCodec.h"
 #include "LengthFieldCodec.h"
@@ -15,7 +15,7 @@ int MtcGetLength(byte* p, int len)
 {
 	int res = LfcGetLength((LengthFieldCodec_t*)&Lfc, p, len);
 
-	if (res > 128)return -2;
+	if (res > 272)return -2;
 	if (res > 0)return res + 6;
 	return res;
 }
@@ -24,7 +24,7 @@ int MtcGetLenCircularQueue(CircularQueue_t* queue)
 {
 	int res = LfcGetLenCircularQueue((LengthFieldCodec_t*)&Lfc, queue);
 
-	if (res > 128)return -2;
+	if (res > 272)return -2;
 	if (res > 0)return res + 6;
 	return res;
 }
@@ -33,7 +33,7 @@ int MtcGetLenStream(Stream_t* st)
 {
 	int res = LfcGetLenStream((LengthFieldCodec_t*)&Lfc, st);
 
-	if (res > 128)return -2;
+	if (res > 272)return -2;
 	if (res > 0)return res + 6;
 	return res;
 }

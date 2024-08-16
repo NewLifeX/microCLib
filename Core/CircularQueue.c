@@ -145,7 +145,7 @@ __INLINE bool CircularQueueRead(CircularQueue_t* queue, byte* pdata)
 	queue->pTail++;
 	if (queue->pTail >= queue->MemEnd)queue->pTail = queue->MemStart;
 
-	return false;
+	return true;
 }
 
 // 读数据， maxlen 是最大读取字节数，返回实际读出字节数

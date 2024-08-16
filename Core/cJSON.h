@@ -139,3 +139,9 @@ void cJSON_Minify(char* json);
 // When assigning an integer value, it needs to be propagated to valuedouble too.
 #define cJSON_SetIntValue(object,val)			((object)?(object)->valueint=(object)->valuedouble=(val):(val))
 
+
+// 辅助功能
+int JsonTryGetValue_Int(cJSON* json, char* name, int def);
+double JsonTryGetValue_Double(cJSON* json, char* name, double def);
+char* JsonTryGetValue_String(cJSON* json, char* name, char* def);
+

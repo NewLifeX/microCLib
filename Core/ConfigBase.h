@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "Type.h"
-#include "CheckConfig.h"
 
 // 需要在自己项目内补充。 ConfigBase_t 只提供读写保存。
 #include "Config.h"

@@ -29,11 +29,6 @@ typedef struct
 // ProcessArray 最后一项必须 ActionName = NULL 。 否则跑飞。
 bool JsonProcessMsg(Buffer2_t* buff, cJsonProcess_t* ProcessArray);
 
-// 辅助功能
-int JsonTryGetValue_Int(cJSON* json, char* name, int def);
-double JsonTryGetValue_Double(cJSON* json, char* name, double def);
-char* JsonTryGetValue_String(cJSON* json, char* name, char* def);
-
 /*
 使用方式
 
