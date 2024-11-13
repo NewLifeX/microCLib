@@ -129,6 +129,151 @@ int MrcSlaveGetLenStream(Stream_t* st)
 	return MrcSlaveGetLength(p, remain);
 }
 
+/// <summary>通过包头计算数据长度，不校验</summary>
+/// <param name="p">最少给3个字节的数组</param>
+/// <returns>理论上包长。-1 数据包类型不对，0 p为null</returns>
+static int _masterCalcRxLen(byte* p)
+{
+	if (p == NULL)return 0;
+
+	byte cmd = p[1];
+	switch (cmd)
+	{
+	case 1:
+	case 2:
+	{
+		byte bitlen = p[2];
+		byte bytelen = (bitlen + 7) / 8;
+		// addr+cmd+bitcnt + 2crc * 5
+		int pklen = 5 + bytelen;
+
+		return pklen;
+	}
+	case 3:
+	case 4:
+	{
+		byte bytelen = p[2];
+		// addr+cmd+bytelen+2crc = 5
+		int pklen = 5 + bytelen;
+
+		return pklen;
+	}
+
+	case 5:
+	case 6:
+	case 0xf:
+	case 0x10:
+	{
+		return 8;
+	}
+
+	default: return -1;
+	}
+}
+
+int MrcMasterGetRxLength(byte* p, int len)
+{
+	if (p == NULL)return 0;
+	if (len < 5)return 0;
+
+	int pklen = _masterCalcRxLen(p);
+
+	// 数据包类型不对
+	if (pklen < 0)return -1;
+	// 长度超出
+	if (pklen > 130)return -2;
+	// 长度不够
+	if (pklen > len)return 0;
+
+	if (Check(p, pklen))return pklen;
+	// 校验失败
+	return -1;
+}
+
+int MrcMasterGetRxLenCircularQueue(CircularQueue_t* queue)
+{
+	if (queue == NULL)return 0;
+	int remian = CircularQueueGetLength(queue);
+	if (remian < 6)return 0;
+
+	// 缓冲
+	byte cache[130];
+	// 读3个字节判断长度
+	CircularQueueReads(queue, cache, 3, true);
+	int pklen = _masterCalcRxLen(cache);
+	// 数据包类型不对
+	if (pklen < 0)return -1;
+	// 长度超出
+	if (pklen > 130)return -2;
+	// 数据包长度
+	if (pklen > remian)return 0;
+		
+	// if (sizeof(cache) >= pklen)
+	// {
+
+	// 直接使用缓冲区读出来判断
+	CircularQueueReads(queue, cache, pklen, true);	
+	if (Check(cache, pklen))return pklen;
+	// 校验失败
+	return -1;
+
+	// }
+	// else
+	// {
+	// 	// 再弄一个缓冲区使用
+	// 	byte* p = (byte*)GlobleMalloc(pklen);
+	// 	if (p == NULL)return -1;
+	// 
+	// 	// 读出来校验一下
+	// 	CircularQueueReads(queue, p, pklen, true);
+	// 	bool crcok = Check(p, pklen);
+	// 	GlobleFree(p);
+	// 
+	// 	if (crcok)return pklen;
+	// 	// 校验失败
+	// 	return -1;
+	// }
+}
+
+int MrcMasterGetRxLenStream(Stream_t* st)
+{
+	int remain = st->Size - st->Position;
+	byte* p = &st->MemStart[st->Position];
+
+	return MrcMasterGetRxLength(p, remain);
+}
+
+/// <summary>获取应答消息内负载数据的偏移量</summary>
+/// <param name="pkt">已经校验通过的数据包</param>
+/// <returns>返回偏移量，-1 消息类型错误，0 无负载数据</returns>
+int MrcMasterGetRxPyOffset(byte* pkt)
+{
+	if (pkt == NULL)return 0;
+
+	byte cmd = pkt[1];
+	switch (cmd)
+	{
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	{
+		return 3;
+	}
+	case 5:
+	case 6:
+	{
+		return 4;
+	}
+	case 0x0f:
+	case 0x10:
+	{
+		return 0;
+	}
+	default: return -1;
+	}
+}
+
 // 01 02 请求指令。 len = 8
 int Mrc01a02(byte addr, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len)
 {

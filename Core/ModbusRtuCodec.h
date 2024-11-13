@@ -4,8 +4,9 @@
 #include "Stream.h"
 #include "CircularQueue.h"
 
-/*
+// Modbus Rtu Controller  (Mrc)
 
+/*
 1:  读线圈
 2:	读离散输入
 3:  读多个保持寄存器
@@ -14,8 +15,6 @@
 6:  写单个寄存器
 15  写多个线圈 
 16	写多个寄存器
-
-// modbus 请求包格式
 
 // 请求包
 // 01   addr+cmd+2regaddr+2bitcnt+2crc
@@ -33,7 +32,7 @@
 // 03	addr+cmd+bytelen+ (bytelen*data) +2crc
 // 04	addr+cmd+bytelen+ (bytelen*data) +2crc
 // 05   06   等于请求包
-// 10	addr+cmd+2regaddr+2bitcnt+2crc
+// 0f	addr+cmd+2regaddr+2bitcnt+2crc
 // 10	addr+cmd+2regaddr+2regcnt+2crc
 
 解释：
@@ -56,6 +55,21 @@
 int MrcSlaveGetLength(byte* data, int len);
 int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue);
 int MrcSlaveGetLenStream(Stream_t* st);
+
+// 获取有效的modbus rtu数据包长度（会校验数据包）
+// 应答消息的长度（从机发送给主机的回复消息）
+// 0 没有足够长度的数据。
+// -1 数据包校验出错
+// -2 数据长度不对，modbus rtu 数据包小于 130 字节。
+int MrcMasterGetRxLength(byte* p, int len);
+int MrcMasterGetRxLenCircularQueue(CircularQueue_t* queue);
+int MrcMasterGetRxLenStream(Stream_t* st);
+
+/// <summary>获取应答消息内负载数据的偏移量</summary>
+/// <param name="pkt">已经校验通过的数据包</param>
+/// <returns>返回偏移量，-1 消息类型错误，0 无负载数据</returns>
+int MrcMasterGetRxPyOffset(byte* pkt);
+
 
 // 01 02 请求指令。 len = 8
 int Mrc01a02(byte addr, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len);

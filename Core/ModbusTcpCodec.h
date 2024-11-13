@@ -1,21 +1,15 @@
 ﻿#pragma once
 
 #include "Type.h"
-
-
-#include "CircularQueue.h"
 #include "Stream.h"
+#include "CircularQueue.h"
 
-// 获取 modbus tcp/udp 数据包长度，不区分请求和应答
-int MtcGetLength(byte* p, int len);
-int MtcGetLenCircularQueue(CircularQueue_t* queue);
-int MtcGetLenStream(Stream_t* st);
-
+// Modbus Tcp Controller  (Mtc)
 
 // modbus tcp/udp 相对于 rtu 来说，头部增加了 6字节，尾部少2字节。
 // 其余部分一致。参考 modbus-rtu 即可。
-// rtu				     addr cmd ndata 2crc
-// tcp   2seq 2pro 2len  addr cmd ndata
+// rtu:					addr cmd ndata 2crc
+// tcp:	2seq 2pro 2len	addr cmd ndata
 
 /*
 1:  读线圈
@@ -27,6 +21,16 @@ int MtcGetLenStream(Stream_t* st);
 15  写多个线圈 
 16	写多个寄存器
 */
+
+// 获取 modbus tcp/udp 数据包长度，不区分请求和应答
+int MtcGetLength(byte* p, int len);
+int MtcGetLenCircularQueue(CircularQueue_t* queue);
+int MtcGetLenStream(Stream_t* st);
+
+/// <summary>获取应答消息内负载数据的偏移量</summary>
+/// <param name="pkt">已经校验通过的数据包</param>
+/// <returns>返回偏移量，-1 消息类型错误，0 无负载数据</returns>
+int MtcMasterGetRxPyOffset(byte* pkt);
 
 #pragma pack(push)
 #pragma pack(1)

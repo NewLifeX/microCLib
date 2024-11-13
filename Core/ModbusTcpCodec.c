@@ -38,6 +38,37 @@ int MtcGetLenStream(Stream_t* st)
 	return res;
 }
 
+/// <summary>获取应答消息内负载数据的偏移量</summary>
+/// <param name="pkt">已经校验通过的数据包</param>
+/// <returns>返回偏移量，-1 消息类型错误，0 无负载数据</returns>
+int MtcMasterGetRxPyOffset(byte* pkt)
+{
+	if (pkt == NULL)return 0;
+
+	byte cmd = pkt[1];
+	switch (cmd)
+	{
+	case 1:
+	case 2:
+	case 3:
+	case 4:
+	{
+		return 3 + 6;
+	}
+	case 5:
+	case 6:
+	{
+		return 4 + 6;
+	}
+	case 0x0f:
+	case 0x10:
+	{
+		return 0;
+	}
+	default: return -1;
+	}
+}
+
 // 01 02 请求指令。 len = 12
 int Mtc01a02(MtcHead_t* head, byte cmd, ushort regaddr, ushort bitlen, byte* data, int len)
 {
