@@ -45,3 +45,28 @@ tm_sec		// 秒 - 取值区间为[0,59]
 /// <returns></returns>
 uint GetFwVersion(uint addr, int len);
 
+
+#ifdef GITVERSION
+#include "GitInfo.h"
+#endif
+
+#ifndef GITINFO
+#define GITINFO "NO GIT"
+#endif
+
+/// <summary>GIT仓库信息</summary>
+typedef struct
+{
+	/// <summary>git最后提交时间 减去 2000-1-1 00:00:00 得到的分钟数</summary>
+	uint TimeMin;
+	/// <summary>提交对应的 SHA-1 值</summary>
+	byte Md5[20];
+	/// <summary>分支信息</summary>
+	char* Branch;
+}GitVersion_t;
+
+/// <summary>获取GIT仓库的提交</summary>
+/// <param name="ver">版本信息</param>
+/// <returns>获取成功</returns>
+bool GetGitVersion(GitVersion_t* ver);
+

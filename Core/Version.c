@@ -174,3 +174,82 @@ uint GetFwVersion(uint addr, int len)
 
 	return minuint;
 }
+
+
+#ifdef GITVERSION
+
+static byte ChToByte(char ch)
+{
+	if ((ch >= '0') && (ch <= '9'))return (byte)ch - (byte)'0';
+	if ((ch >= 'a') && (ch <= 'f'))return (byte)ch - (byte)'a' + 10;
+	if ((ch >= 'A') && (ch <= 'F'))return (byte)ch - (byte)'A' + 10;
+
+	return 0;
+}
+
+static byte ChsToByte(char* chs)
+{
+	byte n0 = ChToByte(chs[0]);
+	byte n1 = ChToByte(chs[1]);
+
+	return (n0 << 4) + n1;
+}
+
+bool GetGitVersion(GitVersion_t* ver)
+{
+	if (ver == NULL)return false;
+	if (memcmp("NO GIT", GITINFO, 6) == 0)return false;
+	int glen = strlen(GITINFO);
+	if (glen < 70)return false;
+
+
+	struct tm time;
+	int num = sscanf(GITINFO, "%d-%d-%d %d:%d:%d ",&time.tm_year, &time.tm_mon, &time.tm_mday,
+		&time.tm_hour, &time.tm_min, &time.tm_sec);
+	if (num < 6) return false;
+
+	// 处理 struct tm 取值范围。
+	time.tm_year -= 1900;
+	time.tm_mon -= 1;
+
+	struct tm start =
+	{
+		.tm_year = 100,		// 其值等于实际年份减去1900
+		.tm_mon = 0,		// 月份（从一月开始，0代表一月） - 取值区间为[0,11]
+		.tm_mday = 1,		// 一个月中的日期 - 取值区间为[1,31] 
+		.tm_hour = 0,		// 时 - 取值区间为[0,23]
+		.tm_min = 0,		// 分 - 取值区间为[0,59]
+		.tm_sec = 0,		// 秒 - 取值区间为[0,59]
+	};
+
+	// 计算秒差/60=分钟差。
+	double min = difftime(mktime(&time), mktime(&start)) / 60.0;
+	uint minuint = (int)min;
+	ver->TimeMin = minuint;
+
+	// SHA-1   字符串转数组
+	int offset = ArrayIndexOf((byte*)GITINFO, glen, (byte*)"\r\n", 2);
+	if (offset < 0)return false;
+	offset += 2;
+	char* psha = (char*) &GITINFO[offset];
+	for (int i = 0; i < 20; i++)
+	{
+		ver->Md5[i] = ChsToByte(psha);
+		psha += 2;
+	}
+
+	// 从后面往前查
+	offset = ArrayLastIndexOf((byte*)GITINFO, glen, (byte*)"\r\n", 2);
+	offset += 2;
+
+	ver->Branch = (char*) &GITINFO[offset];
+	// ver->Branch += 2;
+	
+	return true;
+}
+
+#else
+
+bool GetGitVersion(GitVersion_t* ver) { return false; }
+
+#endif
