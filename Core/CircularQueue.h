@@ -43,6 +43,11 @@ bool CircularQueueRead(CircularQueue_t* CQHandle, byte* pdata);
 // justread = true 的时候,不修改 Stream 数据。只读
 int CircularQueueReads(CircularQueue_t* CQHandle, byte* pdata, int maxlen, bool justread);
 
+// 尝试读数据 peek 1字节。
+bool CircularQueuePeek(CircularQueue_t* queue, byte* pdata);
+// 尝试读数据s，peek 多字节。要么不成功，要么全成功
+bool CircularQueuePeeks(CircularQueue_t* queue, byte* pdata, int len);
+
 /// <summary>读7位压缩编码</summary>
 /// <param name="queue"></param>
 /// <param name="data">输出</param>
