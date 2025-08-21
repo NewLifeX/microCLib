@@ -44,6 +44,11 @@ int StreamReadUint(Stream_t* st, uint* data);
 int StreamReadCompressionUint(Stream_t* st, uint* data);
 int StreamReadBytes(Stream_t* st, byte* p, int len);
 
+// 尝试读数据 peek 1字节。
+bool StreamPeek(Stream_t* st, byte* p);
+// 尝试读数据s，peek 多字节。要么不成功，要么全成功
+bool StreamPeeks(Stream_t* st, byte* p, int len);
+
 // 获取空闲空间
 int StreamRemian(Stream_t* st);
 // 返回当前游标

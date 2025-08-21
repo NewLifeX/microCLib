@@ -197,6 +197,26 @@ int StreamReadBytes(Stream_t* st, byte* p, int len)
 	return len;
 }
 
+bool StreamPeek(Stream_t* st, byte* p)
+{
+	if (st == NULL)return false;
+	// 空间不够一个不写。 避免出现写了半截造成错误。
+	if ((st->Size - st->Position) < 1)return false;
+
+	*p = st->MemStart[st->Position];
+	return true;
+}
+
+bool StreamPeeks(Stream_t* st, byte* p, int len)
+{
+	if (st == NULL)return false;
+	// 空间不够一个不写。 避免出现写了半截造成错误。
+	if ((st->Size - st->Position) < len)return false;
+
+	memcpy(p, &st->MemStart[st->Position], len);	
+	return true;
+}
+
 // 获取空闲空间
 int StreamRemian(Stream_t* st)
 {
