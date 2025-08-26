@@ -2,10 +2,6 @@
 #define __DEBUG_H__
 
 #include "Type.h"
-#ifdef DEBUG
-#include "Uart.h"
-void SetDebugPort(ComName port);
-#endif
 
 typedef enum
 {
@@ -23,7 +19,7 @@ bool FputcRegister(FPutcFunc func);
 bool FputcUnRegister(FPutcFunc func);
 
 // 原来的串口输出方式。 拉出来。 使用新的方式的时候注册进去即可。
-int ComFputc(int ch, FILE* f);
+// int ComFputc(int ch, FILE* f);
 
 // 设置日志输出的串口
 void SetDebugLevel(DebugLevel level);

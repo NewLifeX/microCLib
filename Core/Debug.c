@@ -1,5 +1,5 @@
 ﻿#include "Debug.h"
-#include "Uart.h"
+// #include "Uart.h"
 
 #ifdef DEBUG
 
@@ -7,7 +7,7 @@
 static volatile DebugLevel  PubLevel = DebugOff;
 
 // 最多2种方式进行。
-static FPutcFunc Fputs[2] = {NULL};
+static FPutcFunc Fputs[4] = {NULL};
 
 // 注册
 bool FputcRegister(FPutcFunc func)
@@ -57,13 +57,13 @@ int fputc(int ch, FILE* f)
 		}
 	}
 
-	if (out)return ch;
+	return ch;
 
 	// 兼容以前的方式。 避免底层修改影响上层。
-	return ComFputc(ch, f);
+	// return ComFputc(ch, f);
 }
 
-
+/*
 static ComName DebugPort = COM_NONE;
 int ComFputc(int ch, FILE* f)
 {
@@ -73,17 +73,6 @@ int ComFputc(int ch, FILE* f)
 
 	return	ch;
 }
-
-#ifdef TRACE
-
-// 堆栈跟踪
-static struct
-{
-	const char* Table[16];
-	int Index;
-}TraceStack;
-
-#endif
 
 void SetDebugPort(ComName port)
 {
@@ -99,6 +88,20 @@ void SetDebugPort(ComName port)
 	}
 #endif
 }
+
+*/
+
+#ifdef TRACE
+
+// 堆栈跟踪
+static struct
+{
+	const char* Table[16];
+	int Index;
+}TraceStack;
+
+#endif
+
 
 void SetDebugLevel(DebugLevel level)
 {
