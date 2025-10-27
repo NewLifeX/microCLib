@@ -5,12 +5,15 @@
 #include "ModbusRtuCodec.h"
 #include "ModbusTcpCodec.h"
 
+// #define LogShowArray ShowArray
+#define LogShowArray(...)
+
 void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sendparam)
 {
 	if (p == NULL)return;
 	if (pklen < 8)return;
 
-	ShowArray("485 ", p, pklen, 16);
+	LogShowArray("485 ", p, pklen, 16);
 	if (mrs == NULL)return;
 	if (mrs->SlaveAddr == NULL)return;
 
@@ -39,7 +42,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			if (mrs->BitAreas != NULL) AreaRead2(mrs->BitAreas, regaddr, txpy, bitcnt, true);
 			int txlen = MrcResult01a02(addr, cmd, txpy, bitcnt, tx, sizeof(tx));
 
-			ShowArray("-> ", tx, txlen, 16);
+			LogShowArray("-> ", tx, txlen, 16);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}break;
 		// 写输出线圈
@@ -51,7 +54,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 
 			if (mrs->BitAreas != NULL) AreaWrite2(mrs->BitAreas, regaddr, &value, 1, true);
 
-			ShowArray("-> ", p, pklen, 16);
+			LogShowArray("-> ", p, pklen, 16);
 			if (mrs->Send != NULL) mrs->Send(p, pklen, sendparam);
 		}break;
 		// 写输出线圈S
@@ -63,7 +66,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			if (mrs->BitAreas != NULL) AreaWrite2(mrs->BitAreas, regaddr, &p[7], bitcnt, true);
 			int txlen = MrcResult0f(addr, regaddr, bitcnt, tx, sizeof(tx));
 
-			ShowArray("-> ", tx, txlen, 16);
+			LogShowArray("-> ", tx, txlen, 16);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}break;
 		case 3:	// 读多个保持寄存器
@@ -80,7 +83,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			if (mrs->ByteAreas != NULL) AreaRead2(mrs->ByteAreas, regaddr * 2, txpy, regcnt * 2, false);
 			int txlen = MrcResult03a04(addr, cmd, txpy, regcnt, tx, sizeof(tx));
 
-			ShowArray("-> ", tx, txlen, 16);
+			LogShowArray("-> ", tx, txlen, 16);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}
 		break;
@@ -92,7 +95,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
 			if (mrs->ByteAreas != NULL) AreaWrite2(mrs->ByteAreas, regaddr * 2, (byte*)&regdata, 2, false);
 
-			ShowArray("-> ", p, pklen, 16);
+			LogShowArray("-> ", p, pklen, 16);
 			if (mrs->Send != NULL) mrs->Send(p, pklen, sendparam);
 		}break;
 		case 0x10:
@@ -104,7 +107,7 @@ void ModbusRtuMsgProcess(const ModbusSlave_t* mrs, byte* p, int pklen, void* sen
 			if (mrs->ByteAreas != NULL) AreaWrite2(mrs->ByteAreas, regaddr * 2, &p[7], regcnt * 2, false);
 			int txlen = MrcResult10(addr, regaddr, regcnt, tx, sizeof(tx));
 
-			ShowArray("-> ", tx, txlen, 16);
+			LogShowArray("-> ", tx, txlen, 16);
 			if (mrs->Send != NULL) mrs->Send(tx, txlen, sendparam);
 		}break;
 
@@ -122,10 +125,15 @@ void ModbusRtuTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void*
 	// 不够长
 	if (pklen == 0)return;
 	// 有问题的包
-	if (pklen < 0) { CircularQueueSeek(queue, 1); return; }
+	if (pklen < 0) 
+	{
+		// DebugPrintf("%02X ",*queue->pTail);
+	 	CircularQueueSeek(queue, 1); 
+		return; 
+	}
 
 	// 读数据
-	byte* p = (byte*)GlobleMalloc(pklen);
+	byte* p = (byte*)GlobleMalloc(pklen + 4);
 	CircularQueueReads(queue, p, pklen, false);
 
 	// 处理数据
@@ -140,7 +148,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 	if (pk == NULL)return;
 	if (pklen < 6 + 6)return;
 
-	ShowArray("Rev ", pk, pklen, 16);
+	LogShowArray("Rev ", pk, pklen, 16);
 	if (mrs == NULL)return;
 
 	byte* p = pk + 6;
@@ -169,7 +177,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		if (mrs->BitAreas != NULL)AreaRead2(mrs->BitAreas, regaddr, txpy, bitcnt, true);
 		int txlen = MtcResult01a02(head, cmd, txpy, bitcnt, tx, sizeof(tx));
 
-		ShowArray("-> ", tx, txlen, 16);
+		LogShowArray("-> ", tx, txlen, 16);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 	// 读输出线圈
@@ -184,7 +192,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		if (mrs->BitAreas != NULL)AreaRead2(mrs->BitAreas, regaddr, txpy, bitcnt, true);
 		int txlen = MtcResult01a02(head, cmd, txpy, bitcnt, tx, sizeof(tx));
 
-		ShowArray("-> ", tx, txlen, 16);
+		LogShowArray("-> ", tx, txlen, 16);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 	// 写输出线圈
@@ -196,7 +204,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		byte value = regdata > 0 ? 0x01 : 0x00;
 		if (mrs->BitAreas != NULL)AreaWrite2(mrs->BitAreas, regaddr, &value, 1, true);
 
-		ShowArray("-> ", pk, pklen, 16);
+		LogShowArray("-> ", pk, pklen, 16);
 		if (mrs->Send != NULL)mrs->Send(pk, pklen, sendparam);
 	}break;
 	// 写输出线圈S
@@ -208,7 +216,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		if (mrs->BitAreas != NULL)AreaWrite2(mrs->BitAreas, regaddr, &p[7], bitcnt, true);
 		int txlen = MtcResult0f(head, regaddr, bitcnt, tx, sizeof(tx));
 
-		ShowArray("-> ", tx, txlen, 16);
+		LogShowArray("-> ", tx, txlen, 16);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 
@@ -227,7 +235,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		if (mrs->ByteAreas != NULL)AreaRead2(mrs->ByteAreas, regaddr * 2, txpy, regcnt * 2, false);
 		int txlen = MtcResult03a04(head, cmd, txpy, regcnt, tx, sizeof(tx));
 
-		ShowArray("-> ", tx, txlen, 16);
+		LogShowArray("-> ", tx, txlen, 16);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}
 	break;
@@ -239,7 +247,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		// modbus 地址对应的是 2字节，地址需要 X2 对应字节空间。
 		if (mrs->ByteAreas != NULL)AreaWrite2(mrs->ByteAreas, regaddr * 2, (byte*)&regdata, 2, false);
 
-		ShowArray("-> ", pk, pklen, 16);
+		LogShowArray("-> ", pk, pklen, 16);
 		if (mrs->Send != NULL)mrs->Send(pk, pklen, sendparam);
 	}break;
 	case 0x10:
@@ -251,7 +259,7 @@ void ModbusTcpMsgProcess(const ModbusSlave_t* mrs, byte* pk, int pklen, void* se
 		if (mrs->ByteAreas != NULL)AreaWrite2(mrs->ByteAreas, regaddr * 2, &p[7], regcnt * 2, false);
 		int txlen = MtcResult10(head, regaddr, regcnt, tx, sizeof(tx));
 
-		ShowArray("-> ", tx, txlen, 16);
+		LogShowArray("-> ", tx, txlen, 16);
 		if (mrs->Send != NULL)mrs->Send(tx, txlen, sendparam);
 	}break;
 
@@ -270,7 +278,7 @@ void ModbusTcpTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void*
 	if (pklen < 0) { CircularQueueSeek(queue, 1); return; }
 
 	// 读数据
-	byte* pk = (byte*)GlobleMalloc(pklen);
+	byte* pk = (byte*)GlobleMalloc(pklen + 4);
 	CircularQueueReads(queue, pk, pklen, false);
 
 	// 处理数据

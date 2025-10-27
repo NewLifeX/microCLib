@@ -106,9 +106,9 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 		// if (regcnt != len / 2)return -2;
 		// if (len == 0)return -2;
 		if (len > 122)return -2;
-		if (remian < len)return 0;
-
 		ushort pglen = len + 9;
+		if (remian < pglen)return 0;
+
 		// 10 数据包不会大于 130 字节。
 		byte pgcache[130];
 		CircularQueueReads(queue, pgcache, pglen, true);
