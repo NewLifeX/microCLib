@@ -90,34 +90,28 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 	case 0x0f:
 	case 0x10:
 	{
-		/*
-		// 因为 CircularQueue_t 是读写分离的，所以防止被修改，需要copy出来。
-		CircularQueue_t queue2;
-		CircularQueue_t* q = &queue2;
-		memcpy(q, queue, sizeof(CircularQueue_t));
-		// 需要反复操作，保留 tail 指针位置。
-		byte* tail = q->pTail;
-		*/
-
 		// addr,cmd,regaddr2+regcnt2+len+ dataXlen +crc
 		ushort len = cache[6];
-		// ushort regcnt = cache[4] * 256 + cache[5];
-		// 0f 指令的 regcnt 是 bitcnt。不能做这个判断。
-		// if (regcnt != len / 2)return -2;
-		// if (len == 0)return -2;
-		if (len > 122)return -2;
+		if (len > 122)
+		{
+			// DebugPrintf("len > 122\r\n");
+			return -2;
+		}
 		ushort pglen = len + 9;
-		if (remian < pglen)return 0;
+		if(remian < pglen) return 0;
 
 		// 10 数据包不会大于 130 字节。
 		byte pgcache[130];
 		CircularQueueReads(queue, pgcache, pglen, true);
 
 		if (Check(pgcache, pglen))return pglen;
+		// DebugPrintf("check fail len %d remian %d plen %d\r\n",len, remian, pglen);
 		return -1;
 	}
 
-	default: return -1;
+	default: 
+	// DebugPrintf("CMD 0x%02X\r\n", cmd);
+	return -1;
 	}
 }
 

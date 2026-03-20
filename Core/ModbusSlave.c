@@ -127,8 +127,10 @@ void ModbusRtuTryProcess(CircularQueue_t* queue, const ModbusSlave_t* mrs, void*
 	// 有问题的包
 	if (pklen < 0) 
 	{
-		// DebugPrintf("%02X ",*queue->pTail);
-	 	CircularQueueSeek(queue, 1); 
+		// byte data = 0;
+		// CircularQueueRead(queue,&data);
+		// DebugPrintf("%s seek 0x%02X\r\n",__func__, data);
+		CircularQueueSeek(queue, 1); 
 		return; 
 	}
 
