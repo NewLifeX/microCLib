@@ -90,15 +90,16 @@ void ShowArray(char* name, byte* pdata, int datalen, int showlen);
 
 // 大小端转换
 #define __REV16x(x) ((ushort)((x >> 8) & 0x00ff) | ((x << 8) & 0xff00))
-
 // 大小端切换
 static uint __REV32x(uint x)
 {
 	uint y = 0;
-	y = (x << 24) & 0xff000000;
-	y |= (x << 8) & 0xff0000;
-	y |= (x >> 8) & 0xff00;
-	y |= (x >> 24) & 0xff;
+	uint* px = (uint*)&x;
+	uint* py = (uint*)&y;
+	py[0] = px[3];
+	py[1] = px[2];
+	py[2] = px[1];
+	py[3] = px[0];
 
 	return y;
 }
