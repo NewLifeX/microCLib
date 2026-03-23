@@ -94,8 +94,8 @@ void ShowArray(char* name, byte* pdata, int datalen, int showlen);
 static uint __REV32x(uint x)
 {
 	uint y = 0;
-	uint* px = (uint*)&x;
-	uint* py = (uint*)&y;
+	byte* px = (byte*)&x;
+	byte* py = (byte*)&y;
 	py[0] = px[3];
 	py[1] = px[2];
 	py[2] = px[1];
