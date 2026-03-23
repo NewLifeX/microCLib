@@ -23,11 +23,10 @@ typedef struct
     struct SMItem* Current;
     /// @brief 下一个状态
     struct SMItem* Next;
-
-    /// @brief 所有状态，最后一个状态 State=-1 & Run=NULL
-    SMItem_t** Items; 
 }StateMachine_t;
 
-void StateMachineMian(StateMachine_t* sm);
+void StateMachineInit(StateMachine_t* sm, SMItem_t* items);
+
+void StateMachineMain(StateMachine_t* sm);
 
 void StateMachineGo(StateMachine_t* sm, SMItem_t* item);
