@@ -3,7 +3,20 @@
 #include "Type.h"
 
 /*
-* 下位机不会超过 65535 的负载，所以不支持超长数据包。
+
+本文件实现的函数对应
+DefaultMessage(Newlife.Core)  -> SrmpHead_t
+JsonEncoder(Newlife.Remoting) -> RpcInfo_t
+RpcInfo_t 可以用于实现 ApiClient (对接ApiServer)
+
+由于c语言限制，无法实现JsonEncoder中JSON的序列化/反序列化，需要外部实现。
+本文后面有使用示例，可以参考。
+
+下位机不会超过 65535 的负载，默认不使用扩展长度，如需支持需要打开.c文件的 BIG_PKT 宏定义。
+
+关于SrmpHead_t中的Flag，DefaultMessage对bit0-5定义为DataKinds,在ApiClient中此字段为0 。
+在Newlife相关组件中，DataKinds基本没有使用，所以此处不做处理。
+
 */
 
 #pragma pack(push)
