@@ -20,7 +20,7 @@ void StateMachineMain(StateMachine_t* sm)
     {
         if(sm->Next == NULL)return;
         sm->Current = sm->Next;
-        if(sm->Current->Enter != NULL) sm->Current->Enter(sm->Current);
+        if(sm->Current->Enter != NULL) sm->Current->Enter(sm->Current, sm);
         return;
     }    
     // 下一个状态为空，则保持当前状态不变
@@ -29,17 +29,17 @@ void StateMachineMain(StateMachine_t* sm)
     if(sm->Current == sm->Next)
     {
         // 当前状态不变，则继续执行当前状态
-        sm->Current->Run(sm->Current);
+        sm->Current->Run(sm->Current, sm);
     }
     else
     {
         // 状态切换。 old 退出， new 进入
-        if(sm->Current->Exit != NULL)sm->Current->Exit(sm->Current);
+        if(sm->Current->Exit != NULL)sm->Current->Exit(sm->Current, sm);
 
         sm->Current = sm->Next;
         // 如果下一个状态为空，则直接退出
         if(sm->Current == NULL)return;
-        if(sm->Current->Enter != NULL) sm->Current->Enter(sm->Current);
+        if(sm->Current->Enter != NULL) sm->Current->Enter(sm->Current, sm);
     }
 }
 
@@ -68,13 +68,13 @@ typedef struct
     SMItem_t* Next;
 } SMDelay_t;
 
-void SMDelayEnter(struct SMItem* param)
+void SMDelayEnter(struct SMItem* param, void* sm)
 {
     SMDelay_t* thiss = container_of(param, SMDelay_t, DelayItem);
     thiss->Start = GetCurrentTimeMs();
 }
 
-void SMDelayRun(struct SMItem* param)
+void SMDelayRun(struct SMItem* param, void* sm)
 {
     SMDelay_t* thiss = container_of(param, SMDelay_t, DelayItem);
     Time_t* now = GetCurrentTimeMs();
@@ -82,6 +82,7 @@ void SMDelayRun(struct SMItem* param)
     if(now > thiss->Start + thiss->DelayMs)
     {
         StateMachineGo(thiss->SM, thiss->Next);
+        // StateMachineGo((StateMachine_t*)sm, thiss->Next);
     }
 }
 
@@ -100,7 +101,7 @@ SMDelay_t SMDelay=
     .Next = NULL,
 };
 
-void SMDelayInit(SMDelay_t* delay, StateMachine_t* sm, int delayMs, SMItem_t* next)
+void SMDelayInit(SMDelay_t* delay, int delayMs, StateMachine_t* sm, SMItem_t* next)
 {
     delay.DelayItem.Name = "Delay";
     delay.DelayItem.Enter = SMDelayEnter;

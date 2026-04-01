@@ -10,11 +10,11 @@ typedef struct SMItem
     const char* Name;
 
     /// @brief 进入状态时执行的动作
-    void(*Enter)(struct SMItem*);
+    void(*Enter)(struct SMItem*, void* sm);
     /// @brief 运行状态时执行的动作
-    void (*Run)(struct SMItem*);
+    void (*Run)(struct SMItem*, void* sm);
     /// @brief 退出状态时执行的动作
-    void (*Exit)(struct SMItem*);   
+    void (*Exit)(struct SMItem*, void* sm);
 }SMItem_t;
 
 typedef struct
