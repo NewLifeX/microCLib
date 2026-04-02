@@ -169,7 +169,7 @@ int Mtc0f(MtcHead_t* head, ushort regaddr, byte* bitdata, ushort bitcnt, byte by
 	StreamInit(&st, data, len);
 
 	StreamWriteBytes(&st, (byte*)head, sizeof(MtcHead_t));
-	StreamWriteByte(&st, 0x10);
+	StreamWriteByte(&st, 0x0f);
 	ushort temp = __REV16x(regaddr);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 	temp = __REV16x(bitcnt);
@@ -192,7 +192,7 @@ int MtcResult0f(MtcHead_t* head, ushort regaddr, ushort bitcnt, byte* data, int 
 	StreamInit(&st, data, len);
 
 	StreamWriteBytes(&st, (byte*)head, sizeof(MtcHead_t));
-	StreamWriteByte(&st, 0x10);
+	StreamWriteByte(&st, 0x0f);
 
 	ushort temp = __REV16x(regaddr);
 	StreamWriteBytes(&st, (byte*)&temp, 2);

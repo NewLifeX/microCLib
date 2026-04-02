@@ -1,4 +1,4 @@
-﻿
+
 #include "ModbusRtuCodec.h"
 #include "Crc.h"
 
@@ -48,13 +48,11 @@ int MrcSlaveGetLength(byte* p, int len)
 	{
 		// addr,cmd,regaddr2+regcnt2+len+ dataXlen +crc
 		ushort bytelen = p[6];
-		// ushort regcnt = p[4] * 256 + p[5];
-		// 0f 指令的 regcnt 是 bitcnt。不能做这个判断。
-		// if (regcnt != bytelen / 2)return -2;
 		if (bytelen > 122)return -2;
-		if (len < bytelen)return 0;
 		// 固定长度是 9 字节
 		ushort pglen = bytelen + 9;
+		if(len < pglen)return 0;
+
 		if (Check(p, pglen))return pglen;
 		return -1;
 	}
@@ -66,8 +64,8 @@ int MrcSlaveGetLength(byte* p, int len)
 int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 {
 	if (queue == NULL)return 0;
-	int remian = CircularQueueGetLength(queue);
-	if (remian < 8)return 0;
+	int remain = CircularQueueGetLength(queue);
+	if (remain < 8)return 0;
 
 	// 拿到 cmd
 	byte cache[8];
@@ -98,14 +96,14 @@ int MrcSlaveGetLenCircularQueue(CircularQueue_t* queue)
 			return -2;
 		}
 		ushort pglen = len + 9;
-		if(remian < pglen) return 0;
+		if(remain < pglen) return 0;
 
 		// 10 数据包不会大于 130 字节。
 		byte pgcache[130];
 		CircularQueueReads(queue, pgcache, pglen, true);
 
 		if (Check(pgcache, pglen))return pglen;
-		// DebugPrintf("check fail len %d remian %d plen %d\r\n",len, remian, pglen);
+		// DebugPrintf("check fail len %d remain %d plen %d\r\n",len, remain, pglen);
 		return -1;
 	}
 
@@ -187,8 +185,8 @@ int MrcMasterGetRxLength(byte* p, int len)
 int MrcMasterGetRxLenCircularQueue(CircularQueue_t* queue)
 {
 	if (queue == NULL)return 0;
-	int remian = CircularQueueGetLength(queue);
-	if (remian < 6)return 0;
+	int remain = CircularQueueGetLength(queue);
+	if (remain < 6)return 0;
 
 	// 缓冲
 	byte cache[130];
@@ -200,7 +198,7 @@ int MrcMasterGetRxLenCircularQueue(CircularQueue_t* queue)
 	// 长度超出
 	if (pklen > 130)return -2;
 	// 数据包长度
-	if (pklen > remian)return 0;
+	if (pklen > remain)return 0;
 		
 	// if (sizeof(cache) >= pklen)
 	// {
@@ -375,7 +373,7 @@ int Mrc0f(byte addr, ushort regaddr, byte* bitdata, ushort bitcnt, byte bytelen,
 	StreamInit(&st, data, len);
 
 	StreamWriteByte(&st, addr);
-	StreamWriteByte(&st, 0x10);
+	StreamWriteByte(&st, 0x0f);
 	ushort temp = __REV16x(regaddr);
 	StreamWriteBytes(&st, (byte*)&temp, 2);
 	temp = __REV16x(bitcnt);
@@ -400,7 +398,7 @@ int MrcResult0f(byte addr, ushort regaddr, ushort bitcnt, byte* data, int len)
 	StreamInit(&st, data, len);
 
 	StreamWriteByte(&st, addr);
-	StreamWriteByte(&st, 0x10);
+	StreamWriteByte(&st, 0x0f);
 
 	ushort temp = __REV16x(regaddr);
 	StreamWriteBytes(&st, (byte*)&temp, 2);

@@ -7,6 +7,7 @@
 // Modbus Tcp Controller  (Mtc)
 
 // modbus tcp/udp 相对于 rtu 来说，头部增加了 6字节，尾部少2字节。
+// 头部6字节是MBAP头
 // 其余部分一致。参考 modbus-rtu 即可。
 // rtu:					addr cmd ndata 2crc
 // tcp:	2seq 2pro 2len	addr cmd ndata
