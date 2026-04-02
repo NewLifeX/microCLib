@@ -324,7 +324,8 @@ int RpcPktParse(byte* data, int len, RpcInfo_t* rpc)
 	{
 		uint realLen;
 		if (StreamReadUint(st, &realLen) != 4)return -2;
-		if (realLen + sizeof(SrmpHead_t) > len)return -2;
+		// 负载长度+标准头长度+扩张长度字段
+		if (realLen + sizeof(SrmpHead_t) + 4 > len)return -2;
 	}
 
 	rpc->Head = head;
