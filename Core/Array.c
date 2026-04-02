@@ -1,4 +1,4 @@
-﻿
+
 #include "Array.h"
 
 int ArrayIndexOf(byte* src, int srclen, byte* sub, int sublen)
@@ -52,10 +52,11 @@ int ArrayIndexOf_Offset(byte* src, int srclen, byte* sub, int sublen, int offset
 	if (src == NULL)return -1;
 	if (sub == NULL)return -1;
 
+	if(offset >= srclen)return -1;
 	src += offset;
 	srclen -= offset;
 
-	if (srclen < 1)return -1;
+	// if (srclen < 1)return -1;
 	if (sublen < 1)return -1;
 	if (srclen < sublen)return -1;
 
@@ -67,6 +68,7 @@ int ArrayIndexOf_Offset(byte* src, int srclen, byte* sub, int sublen, int offset
 
 int ArrayIndexOf_Byte_Offset(byte* src, int len, byte by, int offset)
 {
+	if(offset >= len)return -1;
 	src += offset;
 	len -= offset;
 
@@ -221,7 +223,7 @@ void ArraySortInt(int* data, int len)
 		{
 			if (data[j] > data[j + 1])
 			{
-				uint temp = data[j + 1];
+				int temp = data[j + 1];
 				data[j + 1] = data[j];
 				data[j] = temp;
 			}
@@ -245,6 +247,7 @@ bool ArrayEqual(byte* b1, byte* b2, int len)
 
 static inline char tohex(byte by)
 {
+	if (by > 15)return '0';
 	if (by > 9)return by - 10 + 'A';
 	return by + '0';
 }
