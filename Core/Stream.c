@@ -1,4 +1,4 @@
-﻿
+
 #include "Type.h"
 #include "Stream.h"
 
@@ -40,8 +40,6 @@ int StreamWriteUshort(Stream_t* st, ushort data)
 
 	// 下标最大值是 Size-1  超过就说明写满了。
 	if (st->Position + 2 > st->Size)return 0;
-
-	if (st == NULL)return 0;
 
 	st->MemStart[st->Position] = (byte)data;
 	st->MemStart[st->Position + 1] = (byte)(data >> 8);
@@ -308,19 +306,18 @@ void AutoStreamDeInit(Stream_t* st, MemOptions_t* opt)
 bool AutoStreamSetCapacity(Stream_t* st, int len, MemOptions_t* opt)
 {
 	if (st->Size >= len)return true;
-
 	if (opt == NULL)opt = (MemOptions_t*)&OptDefault;
 
 	byte* p = (byte*)opt->malloc(len);
 	byte* oldp = st->MemStart;
 
 	if (p == NULL)return false;
-	memcpy(p, st->MemStart, st->Size);
+	if (oldp != NULL) memcpy(p, st->MemStart, st->Size);
 
 	st->MemStart = p;
 	st->Size = len;
 
-	opt->free(oldp);
+	if (oldp != NULL) opt->free(oldp);
 	return true;
 }
 
